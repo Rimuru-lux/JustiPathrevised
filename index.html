@@ -1,0 +1,1517 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>JustiPath</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Public+Sans:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: a phone-shaped app column (header, scrolling screen, bottom tabs). Navy civic palette, red reserved for emergencies. */
+:root {
+  --bg: #F2F5FA; --surface: #FFFFFF; --surface-2: #EAF0F9; --ink: #14213D; --muted: #566277; --line: #D9E1EC;
+  --brand: #12326B; --on-brand: #FFFFFF; --brand-ink: #12326B; --bar-bg: #12326B; --bar-ink: #FFFFFF; --tbtn: rgba(255,255,255,.16); --brand-soft: #E3EBF8; --link: #1B4690;
+  --gold: #E9B63C; --on-gold: #3A2B00;
+  --red: #C62839; --on-red: #FFFFFF; --red-soft: #FBE7EA;
+  --green: #1D7A4C; --green-soft: #E2F4EA; --amber: #8A5B00; --amber-soft: #FFF2D6;
+  --c-theft: #2F6BD0; --c-theft-bg: #E3ECFB;
+  --c-abuse: #8E3F8B; --c-abuse-bg: #F5E6F4;
+  --c-online: #137F8C; --c-online-bg: #DDF3F5;
+  --c-wages: #B76A12; --c-wages-bg: #FCEBD3;
+  --shadow: 0 1px 2px rgba(20,33,61,.06), 0 6px 18px rgba(20,33,61,.07);
+  --font-d: "Bricolage Grotesque", "Trebuchet MS", system-ui, sans-serif;
+  --font-b: "Public Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --r: 14px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0C1424; --surface: #15203A; --surface-2: #1C2A48; --ink: #EAF0FA; --muted: #A2AFC6; --line: #2B3A58;
+    --brand: #4A7FDB; --on-brand: #06122A; --brand-ink: #8FB5F7; --bar-bg: #101C36; --bar-ink: #EAF0FA; --tbtn: rgba(255,255,255,.12); --brand-soft: #1F3157; --link: #8FB5F7;
+    --gold: #EFC25A; --on-gold: #2A1F00;
+    --red: #E5495A; --on-red: #1A0408; --red-soft: #3A1620;
+    --green: #4FC088; --green-soft: #153A2A; --amber: #F0BC55; --amber-soft: #3B2D10;
+    --c-theft: #7DA8F5; --c-theft-bg: #1B2C50; --c-abuse: #D18CCD; --c-abuse-bg: #3A2039;
+    --c-online: #5CCAD6; --c-online-bg: #123A40; --c-wages: #F0A855; --c-wages-bg: #40290F;
+    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 6px 18px rgba(0,0,0,.35); color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0C1424; --surface: #15203A; --surface-2: #1C2A48; --ink: #EAF0FA; --muted: #A2AFC6; --line: #2B3A58;
+  --brand: #4A7FDB; --on-brand: #06122A; --brand-ink: #8FB5F7; --bar-bg: #101C36; --bar-ink: #EAF0FA; --tbtn: rgba(255,255,255,.12); --brand-soft: #1F3157; --link: #8FB5F7;
+  --gold: #EFC25A; --on-gold: #2A1F00;
+  --red: #E5495A; --on-red: #1A0408; --red-soft: #3A1620;
+  --green: #4FC088; --green-soft: #153A2A; --amber: #F0BC55; --amber-soft: #3B2D10;
+  --c-theft: #7DA8F5; --c-theft-bg: #1B2C50; --c-abuse: #D18CCD; --c-abuse-bg: #3A2039;
+  --c-online: #5CCAD6; --c-online-bg: #123A40; --c-wages: #F0A855; --c-wages-bg: #40290F;
+  --shadow: 0 1px 2px rgba(0,0,0,.4), 0 6px 18px rgba(0,0,0,.35); color-scheme: dark;
+}
+:root[data-hc="1"] { --muted: var(--ink); --line: var(--ink); }
+:root[data-size="l"] { font-size: 112.5%; }
+:root[data-size="xl"] { font-size: 125%; }
+
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+html { padding: env(safe-area-inset-top, 0px) 0 env(safe-area-inset-bottom, 0px); }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font-b); font-size: 15px; line-height: 1.5; -webkit-text-size-adjust: 100%; }
+h1, h2, h3, h4 { font-family: var(--font-d); line-height: 1.2; margin: 0; text-wrap: balance; letter-spacing: -.01em; }
+p { margin: 0; }
+button { font: inherit; color: inherit; cursor: pointer; }
+a { color: var(--link); }
+:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; border-radius: 6px; }
+.ic { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+.ic.sm { width: 18px; height: 18px; } .ic.lg { width: 30px; height: 30px; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+#app { height: 100%; max-width: 480px; margin: 0 auto; display: flex; flex-direction: column; background: var(--bg); position: relative; overflow: hidden; }
+@media (min-width: 520px) { #app { border-left: 1px solid var(--line); border-right: 1px solid var(--line); } }
+.topbar { display: flex; align-items: center; gap: 10px; padding: 10px max(16px, env(safe-area-inset-left, 0px)) 10px max(16px, env(safe-area-inset-right, 0px)); background: var(--bar-bg); color: var(--bar-ink); min-height: 56px; }
+.topbar h1 { font-size: 1.15rem; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.brand { display: flex; align-items: center; gap: 8px; flex: 1; font-family: var(--font-d); font-weight: 800; font-size: 1.25rem; letter-spacing: -.02em; }
+.brand .mark { width: 30px; height: 30px; }
+.tbtn { background: var(--tbtn); border: 0; color: inherit; width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; }
+.tbtn:hover { filter: brightness(1.25); }
+.exitbtn { background: var(--gold); color: var(--on-gold); width: auto; padding: 0 12px; gap: 6px; font-weight: 700; font-size: .8rem; display: flex; align-items: center; }
+main { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 16px max(16px, env(safe-area-inset-left, 0px)) 24px max(16px, env(safe-area-inset-right, 0px)); display: flex; flex-direction: column; gap: 16px; scroll-behavior: smooth; }
+.nav { display: grid; grid-template-columns: repeat(5, 1fr); background: var(--surface); border-top: 1px solid var(--line); padding: 4px max(8px, env(safe-area-inset-left, 0px)) 4px max(8px, env(safe-area-inset-right, 0px)); }
+.nav button { background: none; border: 0; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px 2px; font-size: .72rem; font-weight: 600; color: var(--muted); border-radius: 12px; min-width: 0; position: relative; }
+.nav button[aria-current="page"] { color: var(--brand-ink); }
+.nav button[aria-current="page"]::before { content: ""; position: absolute; top: -5px; width: 28px; height: 3px; border-radius: 2px; background: var(--gold); }
+.dot { position: absolute; top: 4px; right: calc(50% - 20px); min-width: 16px; height: 16px; border-radius: 8px; background: var(--red); color: var(--on-red); font-size: .65rem; display: grid; place-items: center; padding: 0 4px; }
+
+/* surfaces */
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 14px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.card.pad0 { padding: 0; overflow: hidden; gap: 0; }
+.lede { color: var(--muted); font-size: .9rem; }
+.h2 { font-size: 1.15rem; } .h3 { font-size: 1rem; }
+.sec-h { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+.sec-h a, .linkbtn { background: none; border: 0; color: var(--link); font-weight: 600; font-size: .85rem; padding: 4px 0; text-decoration: none; }
+.search { display: flex; align-items: center; gap: 8px; background: var(--surface); border: 2px solid var(--line); border-radius: 14px; padding: 0 12px; }
+.search:focus-within { border-color: var(--brand); }
+.search input { flex: 1; min-width: 0; border: 0; background: none; padding: 13px 0; font: inherit; color: var(--ink); outline: none; }
+.search .ic { color: var(--muted); }
+.sosbtn { display: flex; align-items: center; gap: 12px; width: 100%; border: 0; background: var(--red); color: var(--on-red); border-radius: 16px; padding: 14px 16px; font-weight: 800; font-family: var(--font-d); font-size: 1.1rem; text-align: left; box-shadow: var(--shadow); }
+.sosbtn small { display: block; font-family: var(--font-b); font-weight: 500; font-size: .8rem; opacity: .92; }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.casebtn { text-align: left; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 12px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.casebtn:hover { border-color: var(--brand); }
+.casebtn h3 { font-size: .95rem; }
+.casebtn p { font-size: .78rem; color: var(--muted); }
+.ibox { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; background: var(--brand-soft); color: var(--brand-ink); flex: none; }
+.ibox.theft { background: var(--c-theft-bg); color: var(--c-theft); } .ibox.abuse { background: var(--c-abuse-bg); color: var(--c-abuse); }
+.ibox.online { background: var(--c-online-bg); color: var(--c-online); } .ibox.wages { background: var(--c-wages-bg); color: var(--c-wages); }
+.tile { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 12px 6px; display: flex; flex-direction: column; align-items: center; gap: 6px; font-size: .78rem; font-weight: 600; text-align: center; min-width: 0; }
+.tile:hover { border-color: var(--brand); }
+.row { display: flex; align-items: center; gap: 12px; padding: 12px 14px; background: none; border: 0; border-bottom: 1px solid var(--line); width: 100%; text-align: left; min-width: 0; }
+.row:last-child { border-bottom: 0; }
+.row .grow { flex: 1; min-width: 0; }
+.row .t { font-weight: 700; font-size: .92rem; }
+.row .s { font-size: .8rem; color: var(--muted); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.row .chev { color: var(--muted); }
+.chips { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 2px; scrollbar-width: none; }
+.chips::-webkit-scrollbar { display: none; }
+.chip { border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 6px 12px; font-size: .8rem; font-weight: 600; white-space: nowrap; display: inline-flex; align-items: center; gap: 6px; }
+.chip[aria-pressed="true"], .chip.on { background: var(--brand); color: var(--on-brand); border-color: var(--brand); }
+.badge { display: inline-flex; align-items: center; gap: 4px; font-size: .72rem; font-weight: 700; padding: 2px 8px; border-radius: 999px; background: var(--brand-soft); color: var(--brand-ink); white-space: nowrap; }
+.badge.open { background: var(--green-soft); color: var(--green); } .badge.closed { background: var(--red-soft); color: var(--red); }
+.badge.warn { background: var(--amber-soft); color: var(--amber); } .badge.ok { background: var(--green-soft); color: var(--green); }
+.badge.theft { background: var(--c-theft-bg); color: var(--c-theft); } .badge.abuse { background: var(--c-abuse-bg); color: var(--c-abuse); }
+.badge.online { background: var(--c-online-bg); color: var(--c-online); } .badge.wages { background: var(--c-wages-bg); color: var(--c-wages); }
+.bar { display: flex; gap: 6px; flex-wrap: wrap; }
+.btn { border: 0; border-radius: 12px; padding: 12px 16px; font-weight: 700; background: var(--brand); color: var(--on-brand); display: inline-flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; min-height: 44px; }
+.btn.sec { background: var(--surface); color: var(--ink); border: 1.5px solid var(--line); }
+.btn.red { background: var(--red); color: var(--on-red); } .btn.block { width: 100%; }
+.btn.sm { padding: 8px 12px; min-height: 36px; font-size: .85rem; } .btn[disabled] { opacity: .5; cursor: not-allowed; }
+.note { display: flex; gap: 10px; align-items: flex-start; border-radius: 12px; padding: 10px 12px; font-size: .82rem; background: var(--amber-soft); color: var(--ink); border: 1px solid var(--line); }
+.note.info { background: var(--brand-soft); } .note.red { background: var(--red-soft); }
+.note .ic { margin-top: 2px; }
+.tabs { display: flex; gap: 4px; overflow-x: auto; background: var(--surface-2); padding: 4px; border-radius: 14px; scrollbar-width: none; }
+.tabs::-webkit-scrollbar { display: none; }
+.tabs button { border: 0; background: none; padding: 8px 12px; border-radius: 10px; font-weight: 600; font-size: .82rem; white-space: nowrap; color: var(--muted); }
+.tabs button[aria-selected="true"] { background: var(--surface); color: var(--ink); box-shadow: var(--shadow); }
+.hero { background: var(--brand); color: var(--on-brand); border-radius: 18px; padding: 16px; display: flex; flex-direction: column; gap: 6px; position: relative; overflow: hidden; }
+.hero::after { content: ""; position: absolute; right: -30px; top: -30px; width: 120px; height: 120px; border-radius: 50%; background: var(--gold); opacity: .18; }
+.hero h2 { font-size: 1.4rem; }
+.hero p { opacity: .9; font-size: .88rem; max-width: 30ch; }
+.steps { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.step { display: grid; grid-template-columns: 34px 1fr; gap: 12px; }
+.step .n { width: 34px; height: 34px; border-radius: 50%; background: var(--brand); color: var(--on-brand); display: grid; place-items: center; font-family: var(--font-d); font-weight: 800; }
+.step .x { font-size: .8rem; color: var(--muted); margin-top: 4px; }
+.step .x b { color: var(--ink); }
+.check { display: flex; align-items: flex-start; gap: 12px; padding: 10px 14px; border-bottom: 1px solid var(--line); width: 100%; background: none; border-left: 0; border-right: 0; border-top: 0; text-align: left; }
+.check:last-child { border-bottom: 0; }
+.box { width: 24px; height: 24px; border: 2px solid var(--muted); border-radius: 7px; display: grid; place-items: center; flex: none; margin-top: 1px; }
+.check[aria-checked="true"] .box { background: var(--green); border-color: var(--green); color: var(--bg); }
+.check[aria-checked="true"] .lbl { text-decoration: line-through; color: var(--muted); }
+.progress { height: 8px; border-radius: 4px; background: var(--surface-2); overflow: hidden; }
+.progress i { display: block; height: 100%; background: var(--green); border-radius: 4px; transition: width .25s; }
+.field { display: flex; flex-direction: column; gap: 4px; }
+.field label { font-weight: 600; font-size: .85rem; }
+.field input, .field select, .field textarea { border: 1.5px solid var(--line); border-radius: 12px; padding: 12px; font: inherit; background: var(--surface); color: var(--ink); min-width: 0; }
+.field input:focus, .field select:focus { outline: none; border-color: var(--brand); }
+.field .err { color: var(--red); font-size: .8rem; }
+.switch { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 14px; border-bottom: 1px solid var(--line); width: 100%; background: none; border-left: 0; border-right: 0; border-top: 0; text-align: left; }
+.switch:last-child { border-bottom: 0; }
+.tg { width: 44px; height: 26px; border-radius: 13px; background: var(--line); position: relative; flex: none; transition: background .15s; }
+.tg::after { content: ""; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: #fff; transition: transform .15s; }
+.switch[aria-checked="true"] .tg { background: var(--green); } .switch[aria-checked="true"] .tg::after { transform: translateX(18px); }
+.seg { display: flex; border: 1.5px solid var(--line); border-radius: 12px; overflow: hidden; }
+.seg button { flex: 1; border: 0; background: var(--surface); padding: 8px 10px; font-weight: 600; font-size: .82rem; }
+.seg button[aria-pressed="true"] { background: var(--brand); color: var(--on-brand); }
+.sheet-bg { position: absolute; inset: 0; background: rgba(8,14,28,.55); display: flex; align-items: flex-end; z-index: 30; }
+.sheet { background: var(--bg); width: 100%; max-height: 88%; overflow-y: auto; border-radius: 22px 22px 0 0; padding: 14px max(16px, env(safe-area-inset-left, 0px)) calc(18px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-right, 0px)); display: flex; flex-direction: column; gap: 12px; }
+.sheet > * { flex-shrink: 0; }
+.sheet { overscroll-behavior: contain; -webkit-overflow-scrolling: touch; touch-action: pan-y; }
+.sheet .grab { width: 40px; height: 4px; border-radius: 2px; background: var(--line); align-self: center; }
+.numrow { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-bottom: 1px solid var(--line); }
+.numrow:last-child { border-bottom: 0; }
+.num { font-family: var(--font-d); font-weight: 800; font-size: 1.25rem; font-variant-numeric: tabular-nums; user-select: all; }
+.chat { display: flex; flex-direction: column; gap: 8px; }
+.msg { max-width: 82%; padding: 9px 12px; border-radius: 16px; font-size: .9rem; white-space: pre-wrap; overflow-wrap: anywhere; }
+.msg.me { align-self: flex-end; background: var(--brand); color: var(--on-brand); border-bottom-right-radius: 4px; }
+.msg.them { align-self: flex-start; background: var(--surface); border: 1px solid var(--line); border-bottom-left-radius: 4px; }
+.msg small { display: block; opacity: .65; font-size: .68rem; margin-top: 2px; }
+.composer { display: flex; gap: 8px; padding: 10px max(16px, env(safe-area-inset-left, 0px)) calc(10px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-right, 0px)); background: var(--surface); border-top: 1px solid var(--line); }
+.composer input { flex: 1; min-width: 0; border: 1.5px solid var(--line); border-radius: 22px; padding: 10px 14px; font: inherit; background: var(--bg); color: var(--ink); }
+.toast { position: absolute; left: 50%; bottom: 84px; transform: translateX(-50%); background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: 12px; font-size: .85rem; z-index: 50; max-width: 90%; box-shadow: var(--shadow); }
+.full { position: absolute; inset: 0; z-index: 60; background: var(--bg); overflow-y: auto; display: flex; flex-direction: column; }
+.cover { min-height: 100%; padding: 28px max(20px, env(safe-area-inset-left, 0px)) 28px max(20px, env(safe-area-inset-right, 0px)); display: flex; flex-direction: column; gap: 16px; justify-content: center; }
+.cover .logo { display: flex; align-items: center; gap: 10px; font-family: var(--font-d); font-weight: 800; font-size: 2rem; letter-spacing: -.03em; color: var(--brand-ink); }
+.cover .logo svg { width: 46px; height: 46px; }
+.dpa { max-height: 260px; overflow-y: auto; font-size: .85rem; display: flex; flex-direction: column; gap: 8px; }
+.dpa h4 { font-size: .9rem; }
+.flag { height: 5px; border-radius: 3px; background: linear-gradient(90deg, var(--brand) 0 40%, var(--red) 40% 70%, var(--gold) 70%); }
+.kv { display: grid; grid-template-columns: 96px 1fr; gap: 4px 12px; font-size: .88rem; }
+.kv dt { color: var(--muted); } .kv dd { margin: 0; overflow-wrap: anywhere; }
+.empty { text-align: center; color: var(--muted); padding: 24px 8px; }
+.weather { background: linear-gradient(#5aa6e8, #8ec9f5); color: #0b2a4a; min-height: 100%; padding: 40px 24px; text-align: center; display: flex; flex-direction: column; gap: 6px; align-items: center; }
+.weather .big { font-size: 4rem; font-family: var(--font-d); font-weight: 700; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; scroll-behavior: auto !important; } }
+
+/* ===== Design B: guide character, list menu, bottom search ===== */
+.nav { grid-template-columns: repeat(5, 1fr); }
+.brand-wrap { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.brand-wrap .brand { flex: none; }
+.tagline { font-size: .66rem; line-height: 1.25; opacity: .85; font-weight: 500; margin-left: 38px; margin-top: -2px; }
+.exitbtn span.xl { display: inline; }
+@media (max-width: 430px) { .topbar .exitbtn { font-size: 0; gap: 0; padding: 0; width: 36px; height: 36px; justify-content: center; } }
+.topbar .tbtn.sm { width: 36px; height: 36px; position: relative; }
+.topbar .bdot { position: absolute; top: 3px; right: 3px; min-width: 15px; height: 15px; border-radius: 8px; background: var(--red); color: #fff; font-size: .62rem; display: grid; place-items: center; padding: 0 3px; }
+.guide { display: grid; grid-template-columns: 96px 1fr; gap: 10px; align-items: end; }
+.mascot { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.mascot svg { width: 84px; height: 96px; }
+.mascot span { font-size: .72rem; font-weight: 700; color: var(--brand-ink); background: var(--brand-soft); padding: 2px 10px; border-radius: 999px; }
+.bubble { position: relative; background: var(--surface); border: 1.5px solid var(--line); border-radius: 18px; border-bottom-left-radius: 4px; padding: 12px 14px; display: flex; flex-direction: column; gap: 8px; box-shadow: var(--shadow); }
+.bubble::before { content: ""; position: absolute; left: -9px; bottom: 14px; width: 14px; height: 14px; background: var(--surface); border-left: 1.5px solid var(--line); border-bottom: 1.5px solid var(--line); transform: rotate(45deg); border-bottom-left-radius: 4px; }
+.msgbtn { background: none; border: 0; padding: 0; text-align: left; font-size: 1rem; line-height: 1.35; color: var(--ink); display: block; width: 100%; }
+.msgbtn small { display: block; font-size: .7rem; color: var(--muted); margin-top: 3px; font-weight: 500; }
+.bubble.sos { border-color: var(--red); background: var(--red-soft); }
+.bubble.sos::before { background: var(--red-soft); border-color: var(--red); }
+.bubble.sos .msgbtn b { color: var(--red); font-size: 1.1rem; }
+.bubble .msgt { font-size: .9rem; }
+.bubble .msgt b { font-family: var(--font-d); }
+.bchips { display: flex; flex-wrap: wrap; gap: 6px; }
+.bchip { border: 1.5px solid var(--line); background: var(--surface-2); border-radius: 999px; padding: 6px 10px; font-size: .76rem; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; color: var(--ink); }
+.bchip:hover { border-color: var(--brand); }
+.bchip .ic { width: 15px; height: 15px; }
+.bchip.theft { color: var(--c-theft); } .bchip.abuse { color: var(--c-abuse); } .bchip.online { color: var(--c-online); } .bchip.wages { color: var(--c-wages); }
+.menu { display: flex; flex-direction: column; gap: 10px; }
+.mrow { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; background: var(--surface); border: 1.5px solid var(--line); border-radius: 999px; padding: 8px 14px 8px 8px; min-height: 54px; box-shadow: var(--shadow); }
+.mrow:hover { border-color: var(--brand); }
+.mrow .mi { width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; background: var(--brand-soft); color: var(--brand-ink); flex: none; }
+.mrow .mt { flex: 1; min-width: 0; font-weight: 700; font-size: .98rem; }
+.mrow .ms { display: block; font-weight: 500; font-size: .74rem; color: var(--muted); }
+.mrow .chev { color: var(--muted); }
+.mrow.em { border-color: var(--red); } .mrow.em .mi { background: var(--red); color: var(--on-red); }
+.bsearch { position: sticky; bottom: -24px; margin: 0 -2px -8px; padding: 10px 0 14px; background: linear-gradient(to bottom, transparent, var(--bg) 22%); z-index: 5; }
+.bsearch .search { box-shadow: var(--shadow); border-radius: 999px; padding: 0 8px 0 16px; }
+.bsearch .go { width: 38px; height: 38px; border-radius: 50%; border: 0; background: var(--brand); color: var(--on-brand); display: grid; place-items: center; flex: none; }
+.mini { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-bottom: 1px solid var(--line); }
+.mini:last-child { border-bottom: 0; }
+
+.ggrid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.gcard { position: relative; background: var(--surface); border: 2px solid var(--line); border-radius: 16px; padding: 8px 8px 12px; display: flex; flex-direction: column; align-items: center; gap: 2px; text-align: center; }
+.gcard.on { border-color: var(--brand); background: var(--brand-soft); }
+.gcard b { font-family: var(--font-d); font-size: .86rem; line-height: 1.2; } .gcard small { font-size: .72rem; color: var(--muted); }
+.gcard .gav { width: 100%; aspect-ratio: 120 / 130; display: block; border-radius: 12px; background: linear-gradient(160deg, var(--brand-soft), var(--surface-2)); overflow: hidden; }
+.gcard .gav svg { width: 100%; height: 100%; display: block; }
+.gtick { position: absolute; top: 12px; right: 12px; width: 24px; height: 24px; border-radius: 50%; background: var(--green); color: #fff; display: grid; place-items: center; }
+.mascot { background: none; border: 0; padding: 0; cursor: pointer; color: inherit; }
+.mascot svg { width: 96px; height: 112px; }
+.mascot em { font-size: .64rem; color: var(--muted); font-style: normal; }
+/* ===== chat reactions, bot, assistant, voice ===== */
+.mwrap { display: flex; flex-direction: column; gap: 4px; max-width: 88%; position: relative; }
+.mwrap.me { align-self: flex-end; align-items: flex-end; } .mwrap.them { align-self: flex-start; align-items: flex-start; }
+.mwrap .msg { max-width: 100%; cursor: pointer; }
+.mwrap .who { font-size: .7rem; font-weight: 700; color: var(--muted); display: inline-flex; gap: 4px; align-items: center; }
+.mwrap .acts { display: flex; flex-wrap: wrap; gap: 6px; }
+.btn.sm { padding: 7px 12px; font-size: .8rem; border-radius: 999px; }
+.reacts { display: flex; gap: 4px; margin-top: -6px; margin-left: 8px; }
+.rchip { background: var(--surface); border: 1.5px solid var(--line); border-radius: 999px; padding: 1px 7px; font-size: .9rem; box-shadow: var(--shadow); }
+.rchip.mine { border-color: var(--brand); background: var(--brand-soft); }
+.rbar { display: flex; gap: 2px; background: var(--surface); border: 1.5px solid var(--line); border-radius: 999px; padding: 3px 6px; box-shadow: var(--shadow); flex-wrap: wrap; }
+.rbar button { background: none; border: 0; font-size: 1.35rem; width: 38px; height: 38px; border-radius: 50%; line-height: 1; }
+.rbar button[aria-pressed="true"] { background: var(--brand-soft); }
+.typing { display: inline-flex; gap: 4px; padding: 12px 14px; }
+.typing i { width: 7px; height: 7px; border-radius: 50%; background: var(--muted); animation: tdot 1s infinite ease-in-out; }
+.typing i:nth-child(2) { animation-delay: .15s; } .typing i:nth-child(3) { animation-delay: .3s; }
+@keyframes tdot { 0%, 80%, 100% { opacity: .25; transform: translateY(0); } 40% { opacity: 1; transform: translateY(-3px); } }
+.aitems { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
+.airow { text-align: left; background: var(--surface-2); border: 1px solid var(--line); border-radius: 12px; padding: 8px 10px; display: flex; flex-direction: column; gap: 1px; color: var(--ink); }
+.airow small { font-size: .74rem; color: var(--muted); opacity: 1; margin: 0; }
+.spk { background: var(--brand-soft); color: var(--brand-ink); border: 0; width: 34px; height: 34px; border-radius: 50%; display: inline-grid; place-items: center; flex: none; }
+.spk.abs { position: absolute; top: 8px; right: 8px; z-index: 2; }
+.rd { position: relative; }
+.mwrap .spk { width: 28px; height: 28px; }
+.spkfloat { position: fixed; z-index: 60; width: 44px; height: 44px; border-radius: 50%; border: 0; background: var(--brand); color: var(--on-brand); display: grid; place-items: center; box-shadow: 0 6px 18px rgba(0,0,0,.3); }
+.spkfloat[hidden] { display: none; }
+.vfab { position: absolute; right: 12px; bottom: 74px; z-index: 40; display: inline-flex; align-items: center; gap: 6px; background: var(--gold); color: var(--on-gold); border: 0; border-radius: 999px; padding: 10px 14px; font-weight: 800; font-size: .82rem; box-shadow: 0 6px 18px rgba(0,0,0,.25); }
+.vfab.hi { bottom: 134px; }
+.bubble .msgbtn { padding-right: 30px; }
+.vfab.on-gate { bottom: 14px; top: auto; z-index: 500; }
+.step.rd { padding-right: 40px; }
+
+main > * { flex-shrink: 0; }
+.check.card { flex-direction: row; align-items: center; }
+
+</style>
+
+
+
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3z"/></symbol>
+    <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 017-2.6A4 4 0 0119 10c0 5.6-7 10-7 10z"/></symbol>
+    <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></symbol>
+    <symbol id="i-briefcase" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a2 2 0 012-2h2a2 2 0 012 2v2M3 13h18"/></symbol>
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="M4 11l8-7 8 7v9a1 1 0 01-1 1h-4v-6H9v6H5a1 1 0 01-1-1v-9z"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 5a2 2 0 012-2h13v16H6a2 2 0 00-2 2V5zM4 19a2 2 0 002 2h13"/></symbol>
+    <symbol id="i-speaker" viewBox="0 0 24 24"><path d="M4 9.5v5h3.8l5 4V5.5l-5 4H4zM16.2 9a4.2 4.2 0 010 6M18.8 6.4a8 8 0 010 11.2"/></symbol>
+    <symbol id="i-spark" viewBox="0 0 24 24"><path d="M11 3l1.9 5.4L18.4 10l-5.5 1.7L11 17l-1.9-5.3L3.6 10l5.5-1.6zM18.5 15l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8z"/></symbol>
+    <symbol id="i-message" viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4V5z"/></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></symbol>
+    <symbol id="i-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.5"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M18.7 5.3l-2.1 2.1M7.4 16.6l-2.1 2.1"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/></symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 3l10 18H2L12 3zM12 10v5M12 18v.01"/></symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s7-6 7-11a7 7 0 10-14 0c0 5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></symbol>
+    <symbol id="i-link" viewBox="0 0 24 24"><path d="M10 14a4 4 0 005.7 0l3-3a4 4 0 00-5.7-5.7l-1 1M14 10a4 4 0 00-5.7 0l-3 3a4 4 0 005.7 5.7l1-1"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></symbol>
+    <symbol id="i-chev" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></symbol>
+    <symbol id="i-back" viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+    <symbol id="i-logout" viewBox="0 0 24 24"><path d="M9 4H5a1 1 0 00-1 1v14a1 1 0 001 1h4M16 8l4 4-4 4M20 12H9"/></symbol>
+    <symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></symbol>
+    <symbol id="i-phone" viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 005 5L15 13l5 2v4a2 2 0 01-2 2A16 16 0 013 6a2 2 0 012-2z"/></symbol>
+    <symbol id="i-headset" viewBox="0 0 24 24"><path d="M4 14v-2a8 8 0 0116 0v2M4 14h3v5H5a1 1 0 01-1-1v-4zM20 14h-3v5h2a1 1 0 001-1v-4zM17 19c0 2-2 2-5 2"/></symbol>
+    <symbol id="i-send" viewBox="0 0 24 24"><path d="M4 12l16-8-6 16-3-7-7-1z"/></symbol>
+    <symbol id="i-exit" viewBox="0 0 24 24"><path d="M14 4h5v16h-5M10 8l-4 4 4 4M6 12h10"/></symbol>
+    <symbol id="i-scale" viewBox="0 0 24 24"><path d="M12 3v18M6 21h12M5 7h14M5 7l-3 7a3 3 0 006 0L5 7zM19 7l-3 7a3 3 0 006 0l-3-7z"/></symbol>
+    <symbol id="i-building" viewBox="0 0 24 24"><path d="M4 21V8l8-5 8 5v13M9 21v-6h6v6M8 11h.01M12 11h.01M16 11h.01"/></symbol>
+    <symbol id="i-list" viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01"/></symbol>
+    <symbol id="i-route" viewBox="0 0 24 24"><circle cx="6" cy="5" r="2"/><circle cx="18" cy="19" r="2"/><path d="M6 7v4a4 4 0 004 4h4a4 4 0 014 4"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></symbol>
+    <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 16v-5a6 6 0 0112 0v5l2 2H4l2-2zM10 21h4"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 012-2h9"/></symbol>
+    <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.01"/></symbol>
+    <symbol id="i-bookmark" viewBox="0 0 24 24"><path d="M6 3h12v18l-6-4-6 4V3z"/></symbol>
+    <symbol id="i-external" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9M18 14v5H5V6h5"/></symbol>
+    <symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 114 2c-1 .8-1.5 1.2-1.5 2.5M12 17v.01"/></symbol>
+    <symbol id="i-file" viewBox="0 0 24 24"><path d="M6 3h8l5 5v13H6V3zM14 3v5h5"/></symbol>
+    <symbol id="i-logo" viewBox="0 0 48 48"><path d="M24 4l16 6v12c0 10-7 17-16 20C15 39 8 32 8 22V10l16-6z" fill="currentColor" stroke="none" opacity=".15"/><path d="M24 4l16 6v12c0 10-7 17-16 20C15 39 8 32 8 22V10l16-6z" stroke-width="3" stroke="currentColor" fill="none" stroke-linejoin="round"/><path d="M17 31l5-6 4 3 6-9" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/><circle cx="32" cy="19" r="3" fill="#E9B63C" stroke="none"/></symbol>
+  </defs>
+</svg>
+<div id="app" aria-live="polite"></div>
+<div id="noscript" hidden></div>
+
+<script>
+/* JustiPath data, part 1: cases and laws. Prototype content: confirm against official sources before real use. */
+window.JP = window.JP || {};
+JP.CHECKED = "1 Nov 2026";
+
+JP.CASES = [
+  { id: "theft", icon: "shield", en: "Theft / Physical Injury", fil: "Pagnanakaw / Pananakit",
+    sub: { en: "Stolen belongings, assault, or injury", fil: "Ninakaw na gamit, pambubugbog, o pinsala" },
+    first: { en: "Barangay or nearest police station", fil: "Barangay o pinakamalapit na istasyon ng pulis" },
+    tags: "nanakaw ninakaw magnanakaw holdap snatcher binugbog sinaktan suntok away injury assault robbery stolen phone wallet" },
+  { id: "abuse", icon: "heart", en: "Abuse of Women & Children", fil: "Pang-aabuso sa Kababaihan at Bata",
+    sub: { en: "Violence at home, abuse, threats", fil: "Karahasan sa tahanan, pang-aabuso, banta" },
+    first: { en: "Barangay VAW Desk or PNP Women and Children Protection Desk", fil: "VAW Desk ng barangay o Women and Children Protection Desk ng PNP" },
+    tags: "abuso asawa mister partner sinasaktan battered vawc domestic violence anak bata child abuse pananakot banta protection order bpo" },
+  { id: "online", icon: "globe", en: "Online Harassment / Cyberbullying", fil: "Online na Panliligalig / Cyberbullying",
+    sub: { en: "Threats, fake accounts, leaked photos, bullying", fil: "Banta, pekeng account, leaked na larawan, bullying" },
+    first: { en: "Save evidence, report to the platform, then PNP-ACG or NBI", fil: "Itago ang ebidensya, i-report sa platform, saka PNP-ACG o NBI" },
+    tags: "cyberbully bully bullying harassment fake account pekeng account leaked photos nudes sextortion hack hacked threat banta facebook tiktok messenger online dm stalker" },
+  { id: "wages", icon: "briefcase", en: "Unpaid Wages / Illegal Dismissal", fil: "Hindi Nabayarang Sahod / Iligal na Pagtanggal",
+    sub: { en: "Unpaid pay, 13th month, sudden termination", fil: "Hindi binayarang sahod, 13th month, biglaang tanggal" },
+    first: { en: "DOLE (SEnA), then NLRC if unresolved", fil: "DOLE (SEnA), saka NLRC kung hindi naayos" },
+    tags: "pay paid bayad sahod suweldo hindi sinuwelduhan boss employer amo tinanggal natanggal fired terminated dismissal 13th month unpaid salary labor trabaho work resign" }
+];
+
+JP.LAWS = [
+  { id: "l-rpc", cases: ["theft"], title: "Revised Penal Code", num: "Act No. 3815",
+    sum: "The main criminal law of the Philippines. It defines theft, robbery, and physical injuries and sets the penalties.",
+    pts: ["Theft covers taking someone’s personal property without consent and without violence.", "Physical injuries are classified as serious, less serious, or slight, depending on the harm and how long recovery takes.", "A medical certificate is the key proof of how serious an injury is."],
+    tags: "theft robbery physical injuries nakaw sakit rpc", rel: ["l-kp", "r-blotter", "r-medical"] },
+  { id: "l-kp", cases: ["theft"], title: "Katarungang Pambarangay (Barangay Justice System)", num: "RA 7160, Local Government Code, Chapter 7",
+    sum: "Many minor disputes between people in the same city or municipality must first go through barangay mediation before they can be filed in court.",
+    pts: ["Mediation is handled by the Punong Barangay and the Lupon Tagapamayapa.", "It is generally not required for serious offenses or where a party is not within the same locality.", "If mediation fails, the barangay issues a Certificate to File Action."],
+    tags: "barangay lupon mediation conciliation certificate to file action away", rel: ["l-rpc", "o-barangay"] },
+  { id: "l-9262", cases: ["abuse"], title: "Anti-Violence Against Women and Their Children Act", num: "RA 9262 (2004)",
+    sum: "Protects women and their children from physical, sexual, psychological, and economic abuse by a husband, ex-partner, or someone they have or had a relationship with.",
+    pts: ["Covers physical harm, threats, harassment, controlling money, and emotional abuse.", "Allows a Barangay Protection Order (BPO), and a Temporary or Permanent Protection Order (TPO/PPO) from the court.", "Other people who know about the abuse, such as relatives, social workers, police, or barangay officials, can also seek help."],
+    tags: "vawc violence women children bpo tpo ppo asawa partner domestic", rel: ["r-bpo", "r-confidential", "r-anyone-report"] },
+  { id: "l-7610", cases: ["abuse"], title: "Special Protection of Children Against Abuse, Exploitation and Discrimination Act", num: "RA 7610 (1992)",
+    sum: "Protects children below 18 from abuse, neglect, cruelty, exploitation, and discrimination.",
+    pts: ["Covers physical and psychological abuse, neglect, and exploitation.", "Anyone can report suspected child abuse.", "Local social welfare offices and DSWD can step in to keep the child safe."],
+    tags: "child abuse bata anak minors neglect bantay bata", rel: ["r-child", "o-dswd"] },
+  { id: "l-11313", cases: ["abuse", "online"], title: "Safe Spaces Act (Bawal Bastos Law)", num: "RA 11313 (2019)",
+    sum: "Penalizes gender-based sexual harassment in streets, public spaces, workplaces, schools, and online.",
+    pts: ["Includes catcalling, unwanted sexual remarks, stalking, and sharing sexual content without consent.", "Covers online harassment such as unwanted sexual messages and threats.", "Workplaces and schools must have ways to receive and act on complaints."],
+    tags: "bastos catcall harassment sexual online gender safe spaces", rel: ["l-10175", "l-9995"] },
+  { id: "l-10175", cases: ["online"], title: "Cybercrime Prevention Act of 2012", num: "RA 10175",
+    sum: "Covers crimes committed through computers and the internet, including cyber libel, illegal access (hacking), identity theft, and other offenses.",
+    pts: ["Crimes under the Revised Penal Code done online can carry heavier penalties.", "The PNP-ACG and NBI Cybercrime Division investigate these offenses.", "Keep screenshots, links, and usernames: evidence can disappear."],
+    tags: "cybercrime cyber libel hacking hacked identity theft fake account online", rel: ["o-acg", "o-nbi-ccd", "g-online"] },
+  { id: "l-9995", cases: ["online"], title: "Anti-Photo and Video Voyeurism Act of 2009", num: "RA 9995",
+    sum: "Makes it a crime to record, copy, or share intimate photos or videos without the consent of everyone in them.",
+    pts: ["Consent to a photo being taken is not consent to sharing it.", "Sharing or selling such material is punishable, even if the person first agreed to the recording.", "Report quickly so copies can be traced and removed."],
+    tags: "voyeurism nudes leaked photos video intimate sextortion scandal", rel: ["l-10175", "r-privacy"] },
+  { id: "l-10627", cases: ["online"], title: "Anti-Bullying Act of 2013", num: "RA 10627",
+    sum: "Requires elementary and secondary schools to adopt policies against bullying, including cyberbullying, and to act on reports.",
+    pts: ["Schools must have a way to receive reports and protect the student reporting.", "Applies to bullying through texts, social media, and other electronic means.", "Parents or guardians can report on behalf of a child."],
+    tags: "bullying cyberbullying school student deped paaralan", rel: ["r-school", "o-school"] },
+  { id: "l-11930", cases: ["online", "abuse"], title: "Anti-Online Sexual Abuse or Exploitation of Children (OSAEC) and Anti-Child Sexual Abuse or Exploitation Materials (CSAEM) Act", num: "RA 11930 (2022)",
+    sum: "Penalizes online sexual abuse or exploitation of children and the creation, sharing, or possession of child sexual abuse materials.",
+    pts: ["If a child is being threatened or asked for photos online, report right away.", "Do not forward the material to anyone. Keep screenshots of the account and messages only.", "Report to PNP-ACG, NBI, or DSWD."],
+    tags: "osaec csaem child online sexual abuse exploitation grooming", rel: ["o-acg", "o-nbi-ccd", "h-dswd"] },
+  { id: "l-10173", cases: ["online"], title: "Data Privacy Act of 2012", num: "RA 10173",
+    sum: "Protects personal information. Anyone who collects your data, including this app, must be open about why and keep it secure.",
+    pts: ["You have the right to be informed, to access, correct, and object to the use of your data.", "Misuse of personal data can be reported to the National Privacy Commission.", "JustiPath keeps only what you enter on your own device."],
+    tags: "privacy data personal information npc consent", rel: ["r-privacy", "k-npc"] },
+  { id: "l-labor", cases: ["wages"], title: "Labor Code of the Philippines", num: "Presidential Decree No. 442",
+    sum: "The main law on employment: wages, hours, benefits, and when an employer may or may not end employment.",
+    pts: ["Wages must be paid on time, at least once every two weeks or twice a month.", "An employee may be dismissed only for a just or authorized cause and after due process.", "Illegally dismissed employees may be entitled to reinstatement and back wages."],
+    tags: "labor code wages dismissal security of tenure illegal dismissal", rel: ["r-wage-time", "r-tenure", "o-nlrc"] },
+  { id: "l-6727", cases: ["wages"], title: "Wage Rationalization Act", num: "RA 6727 (1989)",
+    sum: "Sets up regional wage boards that fix minimum wages, so pay cannot fall below the minimum for your region.",
+    pts: ["The minimum wage differs by region and is set by the Regional Tripartite Wages and Productivity Board.", "Underpayment of the minimum wage can be reported to DOLE.", "Check your region’s current rate on the DOLE website."],
+    tags: "minimum wage underpaid sahod regional wage board", rel: ["r-min-wage", "o-dole"] },
+  { id: "l-851", cases: ["wages"], title: "13th Month Pay Law", num: "Presidential Decree No. 851",
+    sum: "Requires employers to give rank-and-file employees a 13th month pay.",
+    pts: ["Employees who worked at least one month in the calendar year qualify.", "It must be paid on or before December 24.", "It equals one-twelfth of the basic salary earned in the year."],
+    tags: "13th month pay bonus december", rel: ["r-13th"] },
+  { id: "l-10396", cases: ["wages"], title: "Strengthening Conciliation-Mediation as a Voluntary Mode of Dispute Settlement", num: "RA 10396 (2013), Single Entry Approach (SEnA)",
+    sum: "Gives labor disputes a 30-day conciliation-mediation step at DOLE before a formal case is filed.",
+    pts: ["You file a Request for Assistance with the SEnA desk of DOLE.", "A mediator helps you and the employer settle, usually within 30 days.", "If no settlement, the case is referred to the proper office, such as NLRC for illegal dismissal."],
+    tags: "sena single entry approach mediation dole request for assistance", rel: ["g-wages", "o-dole", "o-nlrc"] }
+];
+
+</script>
+<script>
+/* JustiPath data, part 2: rights, institutions, hotlines. */
+window.JP = window.JP || {};
+
+JP.RIGHTS = [
+  { id: "r-blotter", cases: ["theft", "abuse"], title: "Right to have your complaint recorded",
+    sum: "You can report an incident at any police station and ask for it to be written in the police blotter. Ask for a copy or the blotter entry number.",
+    law: "Constitution, Bill of Rights", tags: "police blotter report complaint", rel: ["o-pnp", "q-theft"] },
+  { id: "r-medical", cases: ["theft", "abuse"], title: "Right to medical care and a medical certificate",
+    sum: "If you are hurt, get treated first. A medical certificate or medico-legal report is key evidence of your injuries.",
+    law: "Revised Penal Code (physical injuries)", tags: "medical certificate medico legal hospital injury", rel: ["l-rpc", "o-wcpu"] },
+  { id: "r-counsel", cases: ["theft", "abuse", "online", "wages"], title: "Right to free legal help if you cannot afford a lawyer",
+    sum: "The Public Attorney’s Office (PAO) gives free legal assistance to qualified persons. You also have free access to the courts.",
+    law: "Constitution, Art. III, Secs. 11–12", tags: "pao lawyer abogado free legal aid", rel: ["o-pao", "h-pao"] },
+  { id: "r-bpo", cases: ["abuse"], title: "Right to a Barangay Protection Order (BPO)",
+    sum: "A woman or child experiencing abuse can ask the Punong Barangay for a BPO. It is free, ordered against the abuser, and is effective for 15 days. Longer protection comes from a court order (TPO or PPO).",
+    law: "RA 9262", tags: "bpo protection order barangay vawc", rel: ["l-9262", "o-barangay"] },
+  { id: "r-confidential", cases: ["abuse"], title: "Right to confidentiality",
+    sum: "Records of VAWC cases are confidential. Officials are not allowed to share your name, address, or details with the public.",
+    law: "RA 9262", tags: "privacy confidential secret vawc", rel: ["l-9262"] },
+  { id: "r-anyone-report", cases: ["abuse"], title: "Right to get help even if you are not the victim",
+    sum: "Relatives, neighbors, social workers, police, and barangay officials who know about abuse can seek help for the woman or child.",
+    law: "RA 9262", tags: "report for someone else witness kapitbahay", rel: ["l-9262", "h-pnp-wcpc"] },
+  { id: "r-child", cases: ["abuse", "online"], title: "Right of a child to protection",
+    sum: "Every child has the right to be safe from abuse, neglect, exploitation, and online sexual abuse. Anyone can report on a child’s behalf.",
+    law: "RA 7610, RA 11930", tags: "child bata minor protection", rel: ["l-7610", "l-11930", "h-bantay-bata"] },
+  { id: "r-privacy", cases: ["online"], title: "Right to privacy of your photos and personal data",
+    sum: "Your intimate images and personal information cannot be shared without your consent. You can complain to the National Privacy Commission about misuse of your data.",
+    law: "RA 10173, RA 9995", tags: "privacy photos data leaked consent", rel: ["l-10173", "l-9995", "k-npc"] },
+  { id: "r-report-online", cases: ["online"], title: "Right to report online harassment without a lawyer",
+    sum: "You can go directly to the PNP Anti-Cybercrime Group or the NBI Cybercrime Division to report threats, fake accounts, or hacking.",
+    law: "RA 10175", tags: "cybercrime report acg nbi online harassment", rel: ["l-10175", "o-acg", "o-nbi-ccd"] },
+  { id: "r-school", cases: ["online"], title: "Right of a student to a safe school",
+    sum: "Schools must act on bullying reports, including cyberbullying, and protect the student who reports. A parent or guardian can report for a child.",
+    law: "RA 10627", tags: "bullying student school deped", rel: ["l-10627", "o-school"] },
+  { id: "r-wage-time", cases: ["wages"], title: "Right to be paid on time",
+    sum: "Wages must be paid at least once every two weeks or twice a month, in cash or by bank or e-wallet, and in full.",
+    law: "Labor Code", tags: "sahod suweldo on time payday", rel: ["l-labor", "g-wages"] },
+  { id: "r-min-wage", cases: ["wages"], title: "Right to at least the minimum wage",
+    sum: "Your pay cannot be lower than the minimum wage set for your region. Underpayment can be reported to DOLE.",
+    law: "RA 6727", tags: "minimum wage underpaid", rel: ["l-6727", "o-dole"] },
+  { id: "r-13th", cases: ["wages"], title: "Right to 13th month pay",
+    sum: "Rank-and-file employees who worked at least one month in the year must receive 13th month pay on or before December 24.",
+    law: "PD 851", tags: "13th month bonus december", rel: ["l-851"] },
+  { id: "r-tenure", cases: ["wages"], title: "Right to security of tenure",
+    sum: "You cannot be dismissed without a just or authorized cause and without due process, which includes a written notice and a chance to explain.",
+    law: "Labor Code", tags: "illegal dismissal tinanggal fired termination due process", rel: ["l-labor", "o-nlrc"] },
+  { id: "r-sena-free", cases: ["wages"], title: "Right to a free conciliation-mediation at DOLE",
+    sum: "You can file a Request for Assistance through SEnA without a lawyer. The first step is free.",
+    law: "RA 10396", tags: "sena free mediation dole", rel: ["l-10396", "o-dole"] }
+];
+
+/* hours: {t:"24/7"} or {d:[Mon..Fri as 1..5], from:8, to:17}. note shown to user. */
+JP.OFFICES = [
+  { id: "o-barangay", cases: ["theft", "abuse"], title: "Barangay Hall (Lupon and VAW Desk)", addr: "Your barangay hall (ask the nearest barangay)", area: "Every barangay",
+    sum: "First stop for minor disputes, a Barangay Protection Order, and referrals. Many barangays also have a 24-hour duty officer.",
+    hours: { d: [1, 2, 3, 4, 5], from: 8, to: 17 }, note: "Hours vary by barangay. Call before you go.", handles: "Mediation, BPO, VAW Desk, blotter, referrals", q: "barangay hall",
+    tags: "barangay lupon vaw desk bpo mediation", rel: ["l-kp", "r-bpo", "g-theft", "g-abuse"] },
+  { id: "o-pnp", cases: ["theft", "abuse"], title: "PNP Police Station and Women and Children Protection Desk", addr: "Nearest police station", area: "Nationwide",
+    sum: "Take reports, issue a blotter, help with arrests, and assist women and children at the Women and Children Protection Desk (WCPD).",
+    hours: { t: "24/7" }, note: "Police stations accept reports at any hour.", handles: "Blotter, investigation, WCPD", q: "police station",
+    tags: "pnp police pulis wcpd women and children desk blotter", rel: ["r-blotter", "h-pnp", "h-pnp-wcpc"] },
+  { id: "o-wcpu", cases: ["theft", "abuse"], title: "Government Hospital (Women and Children Protection Unit)", addr: "Nearest government hospital, for example PGH in Manila", area: "Major hospitals",
+    sum: "Medical treatment and a medico-legal certificate. Many hospitals have a Women and Children Protection Unit for abuse cases.",
+    hours: { t: "24/7" }, note: "Emergency rooms open 24 hours.", handles: "Treatment, medical certificate, WCPU", q: "government hospital emergency",
+    tags: "hospital wcpu medical certificate medico legal", rel: ["r-medical", "g-abuse"] },
+  { id: "o-prosecutor", cases: ["theft", "abuse", "online"], title: "Office of the City or Provincial Prosecutor", addr: "Hall of Justice of your city or province", area: "Every city and province",
+    sum: "Where a complaint-affidavit is filed so the prosecutor can decide whether to bring a criminal case to court.",
+    hours: { d: [1, 2, 3, 4, 5], from: 8, to: 17 }, note: "Bring copies of your documents.", handles: "Criminal complaints, preliminary investigation", q: "office of the prosecutor hall of justice",
+    tags: "prosecutor fiscal complaint affidavit hall of justice", rel: ["g-theft", "g-abuse"] },
+  { id: "o-pao", cases: ["theft", "abuse", "online", "wages"], title: "Public Attorney’s Office (PAO)", addr: "DOJ Agencies Building, NIA Road corner East Avenue, Diliman, Quezon City (national office); district offices nationwide", area: "Nationwide",
+    sum: "Free legal assistance to qualified persons who cannot afford a lawyer.",
+    hours: { d: [1, 2, 3, 4, 5], from: 8, to: 17 }, note: "Bring proof of income for the indigency test.", handles: "Free legal assistance", q: "public attorney's office",
+    tags: "pao abogado free lawyer legal aid", rel: ["r-counsel", "h-pao"] },
+  { id: "o-dswd", cases: ["abuse"], title: "DSWD and Local Social Welfare Office", addr: "DSWD Central Office, Batasan Complex, Constitution Hills, Quezon City; city or municipal social welfare office", area: "Nationwide",
+    sum: "Protective custody, shelter, counseling, and crisis help for women and children who have experienced abuse.",
+    hours: { d: [1, 2, 3, 4, 5], from: 8, to: 17 }, note: "For emergencies call a hotline.", handles: "Shelter, counseling, child protection", q: "social welfare and development office",
+    tags: "dswd cswdo mswdo shelter child protection social worker", rel: ["l-7610", "h-dswd"] },
+  { id: "o-acg", cases: ["online"], title: "PNP Anti-Cybercrime Group (PNP-ACG)", addr: "Camp Crame, Quezon City", area: "National, with regional units",
+    sum: "Receives reports on cyber harassment, hacking, identity theft, and online threats.",
+    hours: { d: [1, 2, 3, 4, 5], from: 8, to: 17 }, note: "Online reports can be sent any time.", handles: "Cybercrime complaints", q: "PNP anti-cybercrime group",
+    tags: "pnp acg cybercrime online harassment hack", rel: ["l-10175", "k-acg", "g-online"] },
+  { id: "o-nbi-ccd", cases: ["online"], title: "NBI Cybercrime Division", addr: "NBI Building, Taft Avenue, Ermita, Manila", area: "National, with regional offices",
+    sum: "Investigates cybercrime, including online threats, leaked images, fake accounts, and hacking.",
+    hours: { d: [1, 2, 3, 4, 5], from: 8, to: 17 }, note: "Bring a valid ID and printed evidence.", handles: "Cybercrime complaints, digital evidence", q: "NBI office",
+    tags: "nbi cybercrime division online", rel: ["l-10175", "k-nbi", "h-nbi"] },
+  { id: "o-school", cases: ["online"], title: "School Child Protection Committee / Guidance Office", addr: "Your school’s guidance or principal’s office", area: "Every school",
+    sum: "For cases of bullying or cyberbullying involving students. The school must act on reports under the Anti-Bullying Act.",
+    hours: { d: [1, 2, 3, 4, 5], from: 7, to: 16 }, note: "Hours follow your school schedule.", handles: "Bullying reports, student protection", q: "school guidance office",
+    tags: "school bullying guidance principal deped", rel: ["l-10627", "r-school"] },
+  { id: "o-npc", cases: ["online"], title: "National Privacy Commission (NPC)", addr: "5th Floor, Delegation Building, PICC Complex, Roxas Boulevard, Pasay City", area: "National",
+    sum: "Handles complaints about the misuse of personal data and privacy breaches.",
+    hours: { d: [1, 2, 3, 4, 5], from: 8, to: 17 }, note: "Complaints can be started online.", handles: "Data privacy complaints", q: "National Privacy Commission",
+    tags: "npc privacy data complaint", rel: ["l-10173", "k-npc"] },
+  { id: "o-dole", cases: ["wages"], title: "DOLE Field or Regional Office (SEnA Desk)", addr: "Nearest DOLE office. Central office: Muralla corner General Luna Streets, Intramuros, Manila", area: "Nationwide",
+    sum: "First stop for unpaid wages and labor complaints. The SEnA desk arranges a free conciliation-mediation.",
+    hours: { d: [1, 2, 3, 4, 5], from: 8, to: 17 }, note: "Bring your proof of employment.", handles: "SEnA, wage claims, labor standards", q: "DOLE office",
+    tags: "dole sena labor sahod complaint", rel: ["l-10396", "g-wages", "h-dole"] },
+  { id: "o-nlrc", cases: ["wages"], title: "National Labor Relations Commission (NLRC)", addr: "PPSTA Building, Banawe Street, Quezon City (main); regional arbitration branches", area: "Nationwide",
+    sum: "Where illegal dismissal cases are filed before a Labor Arbiter when conciliation at DOLE does not settle the matter.",
+    hours: { d: [1, 2, 3, 4, 5], from: 8, to: 17 }, note: "Ask your DOLE desk if the NLRC is your next step.", handles: "Illegal dismissal, money claims", q: "NLRC regional arbitration branch",
+    tags: "nlrc illegal dismissal labor arbiter", rel: ["l-labor", "r-tenure", "k-nlrc"] }
+];
+
+/* v: "src" = number found in sources this session; "chk" = please verify before use */
+JP.HOTLINES = [
+  { id: "h-911", cat: "Emergency", cases: ["theft", "abuse", "online", "wages"], title: "National Emergency Hotline", num: "911", when: "Any emergency: you or someone else is in danger, a crime is happening, or someone is hurt.", v: "src", em: true, tags: "emergency 911 pulis police ambulance" },
+  { id: "h-pnp", cat: "Security", cases: ["theft", "abuse"], title: "PNP Emergency Hotline", num: "117", alt: "(02) 8722-0650 / Text 0917-847-5757", when: "Report a crime or ask the police to respond.", v: "src", em: true, tags: "pnp police 117" },
+  { id: "h-pnp-wcpc", cat: "Social Services", cases: ["abuse"], title: "PNP Women and Children Protection Center", num: "(02) 3410-3213", alt: "PNP VAWC: (02) 8723-0401 to 20", when: "Abuse of a woman or child, domestic violence.", v: "src", em: true, tags: "wcpc women children abuse vawc" },
+  { id: "h-dswd", cat: "Social Services", cases: ["abuse"], title: "DSWD General Hotline", num: "(02) 8931-8101 to 07", alt: "Text 0918-912-2813 / DSWD-NCR (02) 8734-8639", when: "Help for abused children or women, shelter, or social work assistance.", v: "src", em: false, tags: "dswd social welfare shelter" },
+  { id: "h-bantay-bata", cat: "Social Services", cases: ["abuse", "online"], title: "Bantay Bata 163", num: "163", when: "A child is being abused, neglected, or threatened.", v: "chk", em: false, tags: "bantay bata child" },
+  { id: "h-nbi", cat: "Security", cases: ["online", "abuse"], title: "NBI (Cybercrime and VAWC desks)", num: "(02) 8523-8231 to 38", alt: "(02) 8525-6028", when: "Report cybercrime or violence against women and children.", v: "chk", em: false, tags: "nbi cybercrime vawc" },
+  { id: "h-ncmh", cat: "Mental Health", cases: ["abuse", "online"], title: "NCMH Crisis Hotline (USAP)", num: "0917-899-8727", alt: "989-8727 / (02) 8531-9001 to 10 local 201", when: "You or someone you know feels unsafe or is thinking of self-harm. Emotional support, 24 hours.", v: "src", em: true, tags: "mental health crisis suicide ncmh" },
+  { id: "h-dole", cat: "Social Services", cases: ["wages"], title: "DOLE Hotline", num: "1349", when: "Questions on unpaid wages, 13th month pay, or illegal dismissal.", v: "chk", em: false, tags: "dole labor sahod" },
+  { id: "h-8888", cat: "Social Services", cases: ["theft", "abuse", "online", "wages"], title: "Citizens’ Complaint Hotline", num: "8888", when: "Report complaints about government service, slow action, or a public office.", v: "chk", em: false, tags: "8888 complaint government" },
+  { id: "h-pao", cat: "Social Services", cases: ["theft", "abuse", "online", "wages"], title: "PAO Central Office", num: "(02) 8929-9436", when: "Ask about free legal assistance.", v: "chk", em: false, tags: "pao lawyer legal" },
+  { id: "h-bfp", cat: "Emergency", cases: [], title: "Bureau of Fire Protection (BFP)", num: "(02) 8426-0219", alt: "(02) 8426-0246", when: "Fire or a fire emergency.", v: "src", em: true, tags: "fire bfp bumbero sunog" },
+  { id: "h-pcg", cat: "Security", cases: [], title: "Philippine Coast Guard", num: "(02) 8527-8481 to 89", alt: "(02) 8527-3877 / Text 0917-724-3682 / 0918-967-4697", when: "Emergencies at sea, on rivers, or at ports.", v: "src", em: true, tags: "coast guard sea rescue" },
+  { id: "h-ndrrmc", cat: "Disaster", cases: [], title: "NDRRMC", num: "(02) 8911-5061 to 65 local 100", alt: "(02) 8911-1406 / (02) 8912-2665 / (02) 8912-5668 / (02) 8911-1873", when: "Disasters such as typhoons, floods, and earthquakes.", v: "src", em: false, tags: "disaster ndrrmc typhoon flood earthquake" },
+  { id: "h-dswd-drru", cat: "Disaster", cases: [], title: "DSWD Disaster Response Unit", num: "(02) 8856-3665", alt: "(02) 8852-8081", when: "Relief and help for people hit by a disaster.", v: "src", em: false, tags: "dswd disaster relief" },
+  { id: "h-pagasa", cat: "Weather", cases: [], title: "PAGASA", num: "(02) 8284-0800", when: "Weather and storm information.", v: "src", em: false, tags: "weather pagasa typhoon" },
+  { id: "h-phivolcs", cat: "Weather", cases: [], title: "PHIVOLCS", num: "(02) 8426-1468 to 79", when: "Earthquake, volcano, and tsunami information.", v: "src", em: false, tags: "phivolcs earthquake volcano" },
+  { id: "h-mmda", cat: "Transport", cases: [], title: "MMDA", num: "136", alt: "(02) 8882-4151 to 77", when: "Traffic and road concerns in Metro Manila.", v: "src", em: false, tags: "mmda traffic metro manila" },
+  { id: "h-dotr", cat: "Transport", cases: [], title: "DOTr Action Center", num: "7890", alt: "(02) 8790-8300 / (02) 8726-4925", when: "Complaints and questions on public transport.", v: "src", em: false, tags: "dotr transport complaint" },
+  { id: "h-lto", cat: "Transport", cases: [], title: "LTO", num: "(02) 8922-9061 to 63", alt: "Text LTOHELP to 2600 (all networks)", when: "Driver's license and vehicle registration concerns.", v: "src", em: false, tags: "lto license vehicle" },
+  { id: "h-ltfrb", cat: "Transport", cases: [], title: "LTFRB", num: "1342", alt: "(02) 8426-2515 / (02) 8426-2534 / Text 0921-448-7777", when: "Complaints about taxis, jeepneys, buses, and other public vehicles. 24/7.", v: "src", em: false, tags: "ltfrb taxi jeep bus complaint" },
+  { id: "h-manilawater", cat: "Utilities", cases: [], title: "Manila Water", num: "1627", when: "Water service concerns (east zone, Metro Manila).", v: "src", em: false, tags: "water manila water utility" },
+  { id: "h-maynilad", cat: "Utilities", cases: [], title: "Maynilad", num: "1626", alt: "Text 0998-864-1446", when: "Water service concerns (west zone, Metro Manila).", v: "src", em: false, tags: "water maynilad utility" },
+  { id: "h-redcross", cat: "Emergency", cases: ["theft", "abuse"], title: "Philippine Red Cross", num: "143", alt: "(02) 8790-2300 / (02) 8527-0000", when: "Medical emergency and ambulance support.", v: "src", em: true, tags: "red cross ambulance medical" }
+];
+
+</script>
+<script>
+/* JustiPath data, part 3: requirements, guides, official links, support content. */
+window.JP = window.JP || {};
+
+JP.REQS = [
+  { id: "q-theft", cases: ["theft"], title: "Requirements: Theft / Physical Injury",
+    sum: "Bring these so you are not sent back for missing documents.",
+    items: ["Valid government ID (or any ID you have)", "Date, time, and place of the incident, written down", "Description of the suspect or names, if known", "Proof of ownership of stolen items (receipts, photos, serial numbers, IMEI)", "Photos of injuries or damage", "Medical certificate or medico-legal report (for injuries)", "Names and contact numbers of witnesses", "Police blotter copy or entry number", "CCTV or video footage, if any", "Barangay Certificate to File Action (if it went through the Lupon)"],
+    tags: "requirements checklist documents theft injury", rel: ["g-theft", "o-pnp", "o-barangay"] },
+  { id: "q-abuse", cases: ["abuse"], title: "Requirements: Abuse of Women and Children",
+    sum: "Bring what you can. If it is not safe to gather documents, go to the police or barangay first.",
+    items: ["Valid ID of the woman, or birth certificate / school ID of the child", "Photos of injuries (with dates)", "Medical certificate or medico-legal report", "Screenshots of threats, messages, or calls", "Barangay or police blotter entry", "Child’s birth certificate and proof of relationship to the abuser (marriage certificate or child’s birth certificate)", "Names and contact numbers of witnesses", "A safe address and a phone number where you can be reached", "Written account of what happened, with dates"],
+    tags: "requirements checklist documents abuse vawc", rel: ["g-abuse", "o-pnp", "o-barangay", "o-dswd"] },
+  { id: "q-online", cases: ["online"], title: "Requirements: Online Harassment / Cyberbullying",
+    sum: "Online evidence disappears fast. Save first, report second.",
+    items: ["Valid government ID (school ID for students, with a parent or guardian for minors)", "Screenshots showing the date and time, username, and profile link", "Links (URLs) of posts, profiles, and messages", "Full conversation history, saved or exported", "Phone numbers or emails the harasser used", "Written timeline of events", "Do not delete the messages, posts, or accounts involved", "Keep the phone or device unaltered", "Report to the platform and keep the reference number or email", "For school cases: incident report to the school or guidance office"],
+    tags: "requirements checklist documents screenshots online evidence", rel: ["g-online", "o-acg", "o-nbi-ccd", "o-school"] },
+  { id: "q-wages", cases: ["wages"], title: "Requirements: Unpaid Wages / Illegal Dismissal",
+    sum: "The more proof you have of working there, the faster the case moves.",
+    items: ["Valid government ID", "Proof of employment (contract, company ID, payslips, certificate of employment)", "Proof of unpaid wages (payroll, bank or e-wallet records, time records)", "Messages with your employer about pay or termination", "Termination notice, or messages showing you were told to stop working", "Employer’s full name and business address", "Date you started work, your pay rate, and your last day worked", "SSS, PhilHealth, and Pag-IBIG records, if relevant", "Written timeline of what happened"],
+    tags: "requirements checklist documents wages dismissal sena", rel: ["g-wages", "o-dole", "o-nlrc"] }
+];
+
+JP.GUIDES = [
+  { id: "g-theft", cases: ["theft"], title: "Guide: Theft / Physical Injury",
+    sum: "Start here. About 5 steps from incident to filing.",
+    steps: [
+      { t: "Get to safety and get care", d: "If you are hurt, go to a hospital or call 911. Ask for a medical certificate.", x: "The hospital records your injuries; ask when the certificate will be ready." },
+      { t: "Write down what happened", d: "Note the date, time, place, suspects, and witnesses while you remember.", x: "This becomes your written account and affidavit." },
+      { t: "Report to the police or barangay", d: "Go to the nearest police station and ask for a blotter entry. Minor disputes in the same locality may go to the Barangay Lupon first.", x: "You get a blotter entry. The police may take your statement." },
+      { t: "Complete your documents", d: "Use the checklist: ID, proof of ownership, photos, medical certificate.", x: "Complete papers prevent being turned away." },
+      { t: "File a complaint with the prosecutor", d: "If the matter is not settled, a complaint-affidavit is filed with the Office of the Prosecutor. PAO can help if you cannot afford a lawyer.", x: "The prosecutor decides whether to file a case in court." }
+    ], tags: "guide steps start here theft injury", rel: ["q-theft", "l-rpc", "l-kp", "o-pnp"] },
+  { id: "g-abuse", cases: ["abuse"], title: "Guide: Abuse of Women and Children",
+    sum: "Your safety comes first. Steps can be done in any order that is safe.",
+    steps: [
+      { t: "Get safe", d: "If you are in danger now, call 911 or go to a neighbor, relative, or the nearest police station. Use the quick exit button if someone is watching your screen.", x: "Police can help you leave safely and bring you to a hospital or shelter." },
+      { t: "Get medical help", d: "Go to a government hospital, ideally one with a Women and Children Protection Unit. Ask for a medical certificate.", x: "A doctor records injuries. You do not have to decide about a case yet." },
+      { t: "Ask for a Barangay Protection Order (BPO)", d: "Go to your barangay and ask for a BPO against the abuser. It is free.", x: "The Punong Barangay can issue it the same day; it lasts 15 days." },
+      { t: "Report to the police or WCPD", d: "At the Women and Children Protection Desk, report what happened and ask for a blotter entry.", x: "A trained officer takes your statement. You may bring someone you trust." },
+      { t: "Get support and legal help", d: "DSWD or your local social welfare office can offer shelter and counseling. PAO offers free legal help. A court can issue a longer protection order (TPO or PPO).", x: "You can decide at your own pace whether to file a case." }
+    ], tags: "guide steps start here abuse vawc", rel: ["q-abuse", "l-9262", "r-bpo", "o-wcpu"] },
+  { id: "g-online", cases: ["online"], title: "Guide: Online Harassment / Cyberbullying",
+    sum: "Save evidence first. Do not delete anything.",
+    steps: [
+      { t: "Do not delete anything", d: "Keep the messages, posts, and accounts. You can block the person without deleting the evidence.", x: "Deleted content is harder to prove." },
+      { t: "Take screenshots with details", d: "Capture the date, time, username, and profile link. Copy the URLs.", x: "Good screenshots show who, what, and when." },
+      { t: "Report to the platform", d: "Use the report button on Facebook, Messenger, TikTok, Instagram, or the app involved. Keep the confirmation.", x: "The platform may remove content or suspend an account." },
+      { t: "Report to PNP-ACG or NBI", d: "Send a complaint with your evidence to the PNP Anti-Cybercrime Group or visit the NBI Cybercrime Division with your ID.", x: "Investigators review your evidence and may ask for a sworn statement." },
+      { t: "If you are a student", d: "Tell your school’s guidance office or Child Protection Committee. A parent or guardian can report for a minor.", x: "The school must act under the Anti-Bullying Act." }
+    ], tags: "guide steps start here online harassment cyberbullying", rel: ["q-online", "l-10175", "o-acg", "o-nbi-ccd"] },
+  { id: "g-wages", cases: ["wages"], title: "Guide: Unpaid Wages / Illegal Dismissal",
+    sum: "DOLE first, NLRC if the issue is not settled.",
+    steps: [
+      { t: "Gather your proof", d: "Collect payslips, ID, messages, and records using the checklist. Write a timeline.", x: "Having proof of employment is the most important part." },
+      { t: "Go to the nearest DOLE office", d: "Ask for the SEnA desk and file a Request for Assistance. Online filing may also be available.", x: "The first step is free and no lawyer is needed." },
+      { t: "Attend conciliation-mediation", d: "A mediator meets you and your employer to settle, usually within 30 days.", x: "You may reach a written settlement and be paid." },
+      { t: "If not settled, file with NLRC", d: "For illegal dismissal, a complaint is filed with the NLRC before a Labor Arbiter.", x: "The NLRC will hear the case and decide." },
+      { t: "Mind the deadlines", d: "Money claims generally must be filed within 3 years, and illegal dismissal within 4 years. Do not wait.", x: "Ask DOLE or PAO to confirm the deadline for your case." }
+    ], tags: "guide steps start here wages dismissal sena", rel: ["q-wages", "l-10396", "o-dole", "o-nlrc"] }
+];
+
+/* Official channels. Open in a new tab. v:"chk" means check the site is current. */
+JP.LINKS = [
+  { id: "k-acg", cases: ["online"], title: "PNP Anti-Cybercrime Group", url: "https://acg.pnp.gov.ph", email: "acg@pnp.gov.ph", sum: "Official site for reporting cybercrime to the PNP.", tags: "pnp acg report online cybercrime", rel: ["o-acg"] },
+  { id: "k-nbi", cases: ["online"], title: "NBI Cybercrime Division", url: "https://www.nbi.gov.ph", email: "cybercrime@nbi.gov.ph", sum: "National Bureau of Investigation. Cybercrime complaints and clearances.", tags: "nbi cybercrime", rel: ["o-nbi-ccd"] },
+  { id: "k-npc", cases: ["online"], title: "National Privacy Commission", url: "https://privacy.gov.ph", sum: "File a complaint about the misuse of your personal data.", tags: "npc privacy complaint", rel: ["o-npc", "l-10173"] },
+  { id: "k-dole", cases: ["wages"], title: "Department of Labor and Employment", url: "https://www.dole.gov.ph", sum: "Labor standards, SEnA, and regional office directory.", tags: "dole labor sena", rel: ["o-dole"] },
+  { id: "k-nlrc", cases: ["wages"], title: "National Labor Relations Commission", url: "https://nlrc.dole.gov.ph", sum: "Illegal dismissal cases and Labor Arbiter branches.", tags: "nlrc labor arbiter", rel: ["o-nlrc"] },
+  { id: "k-dswd", cases: ["abuse"], title: "Department of Social Welfare and Development", url: "https://www.dswd.gov.ph", sum: "Protective services for women and children.", tags: "dswd social welfare", rel: ["o-dswd"] },
+  { id: "k-pao", cases: ["theft", "abuse", "online", "wages"], title: "Public Attorney’s Office", url: "https://pao.gov.ph", sum: "Free legal assistance and district office list.", tags: "pao legal aid", rel: ["o-pao"] },
+  { id: "k-pnp", cases: ["theft", "abuse"], title: "Philippine National Police", url: "https://pnp.gov.ph", sum: "Police units and contacts.", tags: "pnp police", rel: ["o-pnp"] },
+  { id: "k-deped", cases: ["online"], title: "Department of Education", url: "https://www.deped.gov.ph", sum: "Child protection and anti-bullying policies for schools.", tags: "deped school bullying", rel: ["o-school"] }
+];
+JP.SUPPORT = {
+  email: "gilzedrickv@gmail.com",
+  phone: "+63 926 569 2789",
+  hours: "Monday to Friday, 8:00 AM to 5:00 PM (Philippine Time)",
+  sample: false
+};
+
+JP.FAQ = [
+  { k: "hotline number call emergency tawag", a: "Open Need Help Now at the top of any screen. It lists 911 and the hotline for your case. If someone is in danger, call 911 first." },
+  { k: "open closed hours schedule oras bukas sarado", a: "Office hours are on the Institutions list. Most government offices open Monday to Friday, 8 AM to 5 PM, and police stations are open 24 hours. Hours can vary, so call first." },
+  { k: "wrong incorrect update outdated mali", a: "Thank you. Please tell us the name of the office or hotline and what looks wrong. We will check it against the official source." },
+  { k: "login password account log in", a: "You can change your name, email, and mobile number in Profile. If you forgot your password in this demo, create a new account from the login screen." },
+  { k: "delete data privacy burahin", a: "Go to Settings > Clear my data on this device. JustiPath keeps your profile and checklist ticks only on your device." },
+  { k: "find office which where saan", a: "Pick your case on the Home screen. The case page shows where to start, in order. You can also search a plain situation like boss won’t pay me." }
+];
+
+JP.NOTIFS = [
+  { id: "n1", t: "Welcome to JustiPath", b: "Pick your case on Home to see where to start, what to bring, and which office to visit. This app gives general information, not legal advice.", ago: "Today" },
+  { id: "n2", t: "Check before you go", b: "Offices can change their hours. Use the Call button to confirm before traveling.", ago: "Today" },
+  { id: "n3", t: "Your privacy", b: "JustiPath does not store your case details on a server. See Settings > Data Privacy Act.", ago: "Today" }
+];
+
+JP.OWNER = { real: "Gil Zedrick F. Vargas", alias: "Vaelnor Aetheris", year: 2026 };
+
+/* LIVE CHAT SETUP: paste your Tawk.to IDs here after creating a free account (see steps in the guide).
+   Direct chat link looks like https://tawk.to/chat/PROPERTY_ID/WIDGET_ID. Leave empty to keep the automated demo chat. */
+JP.CHAT = { tawkProperty: "6ae5d8c2df5a0c3c2e042b72", tawkWidget: "1k68tdenu" };
+
+</script>
+<script>
+/* Filipino labels for the app interface. Content not listed here stays in English. */
+window.JP = window.JP || {};
+JP.FIL = {
+  "Nearby": "Malapit", "Assistant": "Katulong", "JustiPath Assistant": "JustiPath Katulong", "Support": "Suporta", "Voice support": "Suporta sa boses", "Speaking speed": "Bilis ng pagsasalita", "Slow": "Mabagal", "Normal": "Katamtaman", "Fast": "Mabilis", "Test voice": "Subukan ang boses", "Read aloud": "Basahin nang malakas", "Read screen": "Basahin ang screen", "Read this screen aloud": "Basahin nang malakas ang screen na ito", "Tap to react": "Pindutin para mag-react", "Tap a message to react with an emoji.": "Pindutin ang mensahe para mag-react ng emoji.", "Talk to the creator": "Kausapin ang creator", "Talk to the creator (live chat)": "Kausapin ang creator (live chat)", "Bot is answering": "Sumasagot ang bot", "Creator is live: bot paused": "Nandito na ang creator: naka-pause ang bot", "JustiPath Bot": "JustiPath Bot", "Creator": "Creator", "Ask in plain words": "Magtanong sa simpleng salita", "Clear this chat": "Burahin ang chat na ito", "Ask the Assistant": "Tanungin ang Katulong", "Open it": "Buksan", "Full guide": "Buong gabay", "Checklist": "Checklist", "Open checklist": "Buksan ang checklist", "See hotlines": "Tingnan ang hotlines", "Voice support is on. Tap any button to hear it. Tap the speaker icon to hear information.": "Bukas na ang suporta sa boses. Pindutin ang anumang button para marinig ito. Pindutin ang speaker icon para marinig ang impormasyon.", "Voice support is working. JustiPath can read buttons and information aloud.": "Gumagana ang boses. Mababasa ng JustiPath nang malakas ang mga button at impormasyon.", "Voice is not supported on this browser.": "Hindi sinusuportahan ng browser na ito ang boses.",  "Choose your guide": "Piliin ang gabay mo", "Tap to change": "Pindutin para palitan", "Women": "Babae", "Men": "Lalaki", "is now your guide": "na ang gabay mo", "Pick who greets you. You can change this any time.": "Piliin kung sino ang bumabati sa iyo. Puwede mong palitan anumang oras.", "Account created and saved on this device": "Nagawa at na-save ang account sa device na ito", "Your account is saved on this device. Next time, log in with the same email and password.": "Naka-save ang account mo sa device na ito. Sa susunod, mag-log in gamit ang parehong email at password.", "All types": "Lahat ng uri", "Emergency": "Emergency", "Security": "Seguridad", "Social Services": "Serbisyong Panlipunan", "Mental Health": "Kalusugang Pangkaisipan", "Disaster": "Sakuna", "Weather": "Panahon", "Transport": "Transportasyon", "Utilities": "Utilities", "Numbers follow the government e-Hotlines directory (ehotlines.e.gov.ph).": "Batay ang mga numero sa direktoryo ng gobyerno na e-Hotlines (ehotlines.e.gov.ph).", "there": "po", "How can I help you?": "Paano kita matutulungan?", "Need Immediate Help? Call 911": "Kailangan ng Agarang Tulong? Tumawag sa 911", "Tap here to go back": "Pindutin para bumalik", "Call 911 now": "Tawagan ang 911 ngayon", "Tap this message for emergency help": "Pindutin ang mensahe para sa emergency", "Your phone will open its dialer with 911 ready. Press the green call button if it does not dial by itself.": "Bubuksan ng telepono ang dialer na nakahanda ang 911. Pindutin ang berdeng call button kung hindi ito tumawag agad.", "Rights | Laws": "Karapatan | Batas", "Reporting Instructions": "Paraan ng Pag-report", "Support": "Suporta",
+  "Know your rights. Find your way. Take the next step.": "Alamin ang iyong karapatan. Hanapin ang daan. Gawin ang susunod na hakbang.",
+  "I am Justi, your guide.": "Ako si Justi, ang gabay mo.", "Tell me what happened and I will show where to go, what to bring, and what comes next.": "Sabihin mo kung ano ang nangyari at ipapakita ko kung saan pupunta, ano ang dadalhin, at ang susunod.",
+  "Know your rights and the laws behind them": "Alamin ang karapatan at batas", "Who to go to, with open or closed hours": "Sino ang lalapitan, may oras ng bukas o sarado", "Step by step, from incident to filing": "Hakbang-hakbang, mula insidente hanggang pag-file",
+  "Chat with us about using the app": "Makipag-chat tungkol sa paggamit ng app", "Language, text size, privacy": "Wika, laki ng teksto, privacy", "Search: boss won’t pay me, na-hack ang account": "Maghanap: hindi ako sinusuwelduhan, na-hack ang account",
+  "Open or closed is shown in Philippine time.": "Ipinapakita ang bukas o sarado sa oras ng Pilipinas.",
+  "Quick exit": "Mabilis na labas", "Back": "Bumalik", "Settings": "Mga Setting", "Home": "Home", "Library": "Aklatan", "Help": "Tulong", "Messages": "Mga Mensahe", "Profile": "Profile",
+  "Open 24 hours": "Bukas 24 oras", "Mon to Fri": "Lun hanggang Biy", "Open now": "Bukas ngayon", "Closed now": "Sarado ngayon", "until": "hanggang", "opens": "bubukas",
+  "Source-checked": "Nasuri sa source", "Please verify before use": "Pakikumpirma bago gamitin", "Philippines": "Pilipinas", "Hello": "Kumusta",
+  "Know your rights. Find help. Report with confidence.": "Alamin ang iyong karapatan. Humanap ng tulong. Mag-report nang may tiwala.",
+  "Tell us what happened. We show where to go, what to bring, and what comes next.": "Sabihin kung ano ang nangyari. Ipapakita namin kung saan pupunta, ano ang dadalhin, at ang susunod na hakbang.",
+  "Try: boss won’t pay me, na-hack ang account": "Subukan: hindi ako sinusuwelduhan, na-hack ang account", "Search": "Maghanap",
+  "Need help now?": "Kailangan ng tulong ngayon?", "911 and hotlines for your case": "911 at mga hotline para sa kaso mo", "What happened?": "Ano ang nangyari?", "Browse by section": "Mag-browse ayon sa seksyon",
+  "Rights": "Mga Karapatan", "Laws": "Mga Batas", "Institutions": "Mga Institusyon", "Hotlines": "Mga Hotline", "Requirements": "Mga Kailangan", "Guides": "Mga Gabay", "Reporting links": "Mga Link sa Pag-report",
+  "Live chat": "Live chat", "Open now near you": "Bukas ngayon malapit sa iyo", "See all": "Tingnan lahat", "Map": "Mapa",
+  "Tap Map to search near your current location. Hours may vary, so call before you go.": "Pindutin ang Mapa para maghanap malapit sa iyo. Maaaring magbago ang oras, kaya tumawag muna.",
+  "JustiPath gives general information only. It is not legal advice, and it does not file cases for you.": "Pangkalahatang impormasyon lang ang ibinibigay ng JustiPath. Hindi ito legal advice at hindi ito nagfa-file ng kaso para sa iyo.",
+  "Start here": "Magsimula dito", "What to expect": "Ano ang aasahan", "ready": "handa", "Guide": "Gabay", "Checklist": "Checklist", "Links": "Mga Link",
+  "Open everything for this case in the Library": "Buksan lahat para sa kasong ito sa Aklatan", "Nothing here yet.": "Wala pa dito.", "All": "Lahat", "All cases": "Lahat ng kaso",
+  "Plain-language rights only. Each one points to the law behind it.": "Mga karapatan lang sa simpleng salita. Bawat isa ay may kaugnay na batas.", "Laws only, with a short summary of what each one does.": "Mga batas lang, may maikling buod ng bawat isa.",
+  "Where to go. Open or closed is shown in Philippine time.": "Kung saan pupunta. Ipinapakita ang bukas o sarado sa oras ng Pilipinas.", "Tap a hotline to see when to use it.": "Pindutin ang hotline para makita kung kailan gagamitin.",
+  "Documents to prepare, with tick boxes.": "Mga dokumentong ihahanda, may tick box.", "Where to start and what happens next.": "Kung saan magsisimula at ano ang susunod.", "Official websites and email addresses for reporting.": "Opisyal na website at email para sa pag-report.",
+  "This looks like": "Mukhang ito ay", "results": "resulta", "No results. Try other words, like sahod, pulis, or hotline.": "Walang resulta. Subukan ang ibang salita, tulad ng sahod, pulis, o hotline.",
+  "Every right, law, institution, hotline, checklist, guide, and link in one place.": "Lahat ng karapatan, batas, institusyon, hotline, checklist, gabay, at link sa iisang lugar.", "Search rights, laws, offices, hotlines": "Maghanap ng karapatan, batas, opisina, hotline",
+  "Right": "Karapatan", "Law": "Batas", "Institution": "Institusyon", "Hotline": "Hotline", "Reporting link": "Link sa pag-report",
+  "Based on": "Batay sa", "Address": "Address", "Hours": "Oras", "Handles": "Hinahawakan", "Note": "Paalala", "Also": "Pati na rin", "When to use": "Kailan gagamitin", "Call": "Tumawag", "Copy number": "Kopyahin ang numero",
+  "If Call does nothing, dial the number on your phone.": "Kung walang nangyari sa Tumawag, i-dial ang numero sa telepono mo.", "Website": "Website", "Email": "Email", "Open official site": "Buksan ang opisyal na site", "Copy email": "Kopyahin ang email",
+  "Linked to this": "Kaugnay nito", "Saved": "Naka-save", "Save": "I-save", "Removed from saved": "Inalis sa naka-save", "Saved to your profile": "Na-save sa profile mo",
+  "General information only. Confirm details with the office before you go.": "Pangkalahatang impormasyon lang. Kumpirmahin sa opisina bago pumunta.", "Copied": "Nakopya", "Close": "Isara",
+  "In danger? Call first": "Nasa panganib? Tumawag muna", "National Emergency Hotline": "Pambansang Emergency Hotline", "Pick your case to see the hotlines that fit. If Call does nothing, dial the number on your phone.": "Piliin ang kaso mo para makita ang tamang hotline. Kung walang nangyari sa Tumawag, i-dial ang numero sa telepono.",
+  "See all hotlines": "Tingnan ang lahat ng hotline", "Cancel": "Kanselahin",
+  "Data Privacy Act notice": "Abiso sa Data Privacy Act", "Please read this before using JustiPath.": "Pakibasa ito bago gamitin ang JustiPath.",
+  "I have read the notice and I agree to the processing of my information under the Data Privacy Act (RA 10173).": "Nabasa ko ang abiso at pumapayag ako sa pagproseso ng aking impormasyon ayon sa Data Privacy Act (RA 10173).",
+  "Agree and continue": "Sumang-ayon at magpatuloy", "Decline": "Tanggihan", "You need to agree to the Data Privacy Act notice to use JustiPath.": "Kailangan mong sumang-ayon sa abiso ng Data Privacy Act para magamit ang JustiPath.",
+  "Create your account": "Gumawa ng account", "Log in": "Mag-log in", "Create account": "Gumawa ng account", "Full name": "Buong pangalan", "Email account": "Email account", "Mobile number (09XX XXX XXXX or +63)": "Mobile number (09XX XXX XXXX o +63)", "Region": "Rehiyon",
+  "Password": "Password", "Confirm password": "Kumpirmahin ang password", "Continue without an account": "Magpatuloy nang walang account", "Demo: accounts are stored only on this device.": "Demo: ang mga account ay nasa device na ito lang.",
+  "Enter a valid email address.": "Maglagay ng wastong email.", "Enter your full name.": "Ilagay ang buong pangalan.", "Enter a Philippine mobile number, like 0917 123 4567.": "Maglagay ng mobile number sa Pilipinas, tulad ng 0917 123 4567.",
+  "Use at least 8 characters for your password.": "Gumamit ng hindi bababa sa 8 character.", "The passwords do not match.": "Hindi magkapareho ang password.", "This email already has an account. Log in instead.": "May account na ang email na ito. Mag-log in na lang.", "Email or password is incorrect.": "Mali ang email o password.", "Logged in": "Naka-log in",
+  "Live chat support": "Live chat support", "Support online": "Online ang support", "Support offline": "Offline ang support", "Ask about the app, wrong information, or how to use a feature.": "Magtanong tungkol sa app, maling impormasyon, o paano gamitin ang isang feature.",
+  "Notifications": "Mga Abiso", "Contact us": "Makipag-ugnayan", "Phone": "Telepono", "Sample contact details for this prototype. Replace them before launch.": "Sample na contact details para sa prototype na ito. Palitan bago ilunsad.",
+  "Today": "Ngayon", "Hello! This is JustiPath support. I can help with using the app, wrong office info, or finding a feature.": "Kumusta! Ito ang JustiPath support. Matutulungan kita sa paggamit ng app, maling impormasyon ng opisina, o paghahanap ng feature.",
+  "Our team is offline now. We reply Monday to Friday, 8 AM to 5 PM. In danger? Call 911.": "Offline ang aming team ngayon. Sumasagot kami Lunes hanggang Biyernes, 8 AM hanggang 5 PM. Nasa panganib? Tumawag sa 911.",
+  "In danger? Call 911.": "Nasa panganib? Tumawag sa 911.", "This chat is for app questions only. No legal advice. Do not share sensitive case details.": "Para sa tanong tungkol sa app lang ang chat na ito. Walang legal advice. Huwag magbahagi ng sensitibong detalye ng kaso.",
+  "Demo: replies are automated": "Demo: awtomatiko ang mga sagot", "Wrong office information": "Maling impormasyon ng opisina", "The app is not working": "Hindi gumagana ang app", "How do I use JustiPath?": "Paano gamitin ang JustiPath?", "Type your message": "I-type ang mensahe", "Send": "Ipadala",
+  "Thanks for your message. A support agent will reply in the next business day.": "Salamat sa mensahe. Sasagot ang support agent sa susunod na araw ng trabaho.", "We are offline now.": "Offline kami ngayon.", "For emergencies, call 911.": "Para sa emergency, tumawag sa 911.",
+  "You are using JustiPath as a guest": "Gumagamit ka ng JustiPath bilang guest", "Log in to keep a profile, an emergency contact, and your saved items on this device.": "Mag-log in para magkaroon ng profile, emergency contact, at naka-save na items sa device na ito.", "Log in or create account": "Mag-log in o gumawa ng account",
+  "My details": "Aking detalye", "Mobile number": "Mobile number", "Emergency contact name": "Pangalan ng emergency contact", "Emergency contact number": "Numero ng emergency contact", "Save changes": "I-save ang pagbabago", "Profile saved": "Na-save ang profile",
+  "Saved items": "Mga naka-save", "Tap Save on any item to keep it here.": "Pindutin ang I-save sa anumang item para itago dito.", "My checklists": "Aking mga checklist", "Data Privacy Act": "Data Privacy Act", "About JustiPath": "Tungkol sa JustiPath", "Log out": "Mag-log out", "Log out?": "Mag-log out?",
+  "You will return to the login screen. Your data stays on this device.": "Babalik ka sa login screen. Mananatili ang data mo sa device na ito.",
+  "Language": "Wika", "Menus and case names switch language. Long legal text is shown in English first.": "Nagbabago ang wika ng menu at pangalan ng kaso. Ang mahabang legal na teksto ay nasa English muna.", "Display": "Display", "Text": "Teksto", "Larger": "Mas malaki", "Largest": "Pinakamalaki", "System": "System", "Light": "Maliwanag", "Dark": "Madilim",
+  "High contrast": "Mataas na contrast", "Stronger text and borders": "Mas matingkad na teksto at border", "Show Quick exit button": "Ipakita ang Mabilis na labas", "A one-tap way to hide the app": "Isang pindot para itago ang app", "Remember my searches": "Tandaan ang paghahanap ko", "Off by default, for shared phones": "Naka-off bilang default, para sa shared na telepono",
+  "Neutral notifications": "Neutral na abiso", "Hide message details in notifications": "Itago ang detalye ng mensahe sa abiso", "Offline use": "Paggamit nang offline", "Hotlines, checklists, and guides are built into the app. Maps, online links, and live chat need internet.": "Nasa app na ang mga hotline, checklist, at gabay. Kailangan ng internet ang mapa, online link, at live chat.",
+  "Clear my data on this device": "Burahin ang data ko sa device na ito", "Clear all data?": "Burahin lahat ng data?", "Clear data": "Burahin ang data", "This removes your profile, saved items, checklist ticks, and chat on this device. You will see the Data Privacy Act notice again.": "Aalisin nito ang profile, naka-save, checklist, at chat sa device na ito. Makikita mo ulit ang abiso ng Data Privacy Act.",
+  "Data Privacy Act of 2012 (RA 10173)": "Data Privacy Act ng 2012 (RA 10173)", "Consent given": "Petsa ng pagsang-ayon", "Privacy contact": "Contact sa privacy", "sample": "sample", "National Privacy Commission": "National Privacy Commission", "Withdraw my consent": "bawiin ang aking pagsang-ayon", "Withdraw consent?": "Bawiin ang pagsang-ayon?", "Withdraw and clear": "Bawiin at burahin",
+  "Created by": "Ginawa ni", "Owner": "May-ari", "Code name": "Code name", "Year": "Taon", "Chat with a support agent": "Makipag-chat sa support agent", "Start live chat": "Simulan ang live chat", "Live chat is not available right now.": "Hindi available ang live chat ngayon.", "Four cases covered": "Apat na kasong sakop", "Please note": "Paalala", "General information only. Not legal advice.": "Pangkalahatang impormasyon lang. Hindi legal advice.", "JustiPath does not file cases, track cases, or act on your behalf.": "Hindi nagfa-file, nagta-track ng kaso, o kumikilos para sa iyo ang JustiPath.",
+  "In immediate danger, call 911.": "Kung nasa agarang panganib, tumawag sa 911.", "Hotline data last checked": "Huling sinuri ang hotline data"
+};
+
+</script>
+<script>
+/* JustiPath core: storage, language, helpers, search, router, render shell. */
+(function () {
+  const JP = window.JP;
+  JP.V = {}; JP.A = {}; JP.I = {};
+
+  /* ---------- storage (per device only; falls back to memory) ---------- */
+  const KEY = "justipath.v1";
+  let mem = null;
+  const DEF = () => ({ users: {}, session: null, consent: null,
+    set: { lang: "en", size: "m", theme: "system", hc: false, saveSearch: false, quickExit: true, neutralNotif: true, guide: "ysabel", voice: false, rate: "n" },
+    checks: {}, saved: [], chat: [], ai: [], readN: [], ec: {}, recent: [] });
+  JP.load = function () {
+    let d = null;
+    try { d = JSON.parse(localStorage.getItem(KEY) || "null"); } catch (e) { d = mem; }
+    d = d || DEF();
+    const base = DEF(); for (const k in base) if (d[k] === undefined) d[k] = base[k];
+    d.set = Object.assign(base.set, d.set); JP.D = d;
+  };
+  /* Accounts are saved in two places on this device (localStorage and an IndexedDB copy) so they survive closing the app. */
+  const idb = (mode, fn) => new Promise(res => { try { const rq = indexedDB.open("justipath", 1); rq.onupgradeneeded = () => rq.result.createObjectStore("kv"); rq.onerror = () => res(null); rq.onsuccess = () => { try { const tx = rq.result.transaction("kv", mode), r = fn(tx.objectStore("kv")); tx.oncomplete = () => res(r && r.result !== undefined ? r.result : null); tx.onerror = () => res(null); } catch (e) { res(null); } }; } catch (e) { res(null); } });
+  JP.save = function () { mem = JP.D; let str = JSON.stringify(JP.D); try { localStorage.setItem(KEY, str); } catch (e) { /* storage blocked */ } idb("readwrite", st => st.put(str, KEY)); };
+  JP.wipe = function () { try { localStorage.removeItem(KEY); } catch (e) {} idb("readwrite", st => st.delete(KEY)); mem = null; JP.load(); };
+  JP.restore = async function () {
+    try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist(); } catch (e) {}
+    let have = false; try { have = !!localStorage.getItem(KEY); } catch (e) {}
+    if (have) { JP.save(); return; }
+    const str = await idb("readonly", st => st.get(KEY));
+    if (str) { try { localStorage.setItem(KEY, str); } catch (e) {} try { JP.D = JSON.parse(str); const base = DEF(); for (const k in base) if (JP.D[k] === undefined) JP.D[k] = base[k]; JP.D.set = Object.assign(base.set, JP.D.set); mem = JP.D; } catch (e) {} }
+  };
+  window.addEventListener("pagehide", () => { try { JP.save(); } catch (e) {} });
+  JP.load();
+
+  /* ---------- state ---------- */
+  JP.S = { route: { name: "home", params: {} }, stack: [], sheet: null, toast: null, neutral: false, gate: null };
+
+  /* ---------- helpers ---------- */
+  JP.esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  JP.ic = (n, c) => '<svg class="ic ' + (c || "") + '" aria-hidden="true"><use href="#i-' + n + '"/></svg>';
+  JP.lang = () => JP.D.set.lang;
+  JP.t = s => (JP.D.set.lang === "fil" && JP.FIL && JP.FIL[s]) || s;
+  JP.cname = c => { const o = JP.CASES.find(x => x.id === c); return o ? o[JP.lang()] || o.en : c; };
+  JP.cobj = c => JP.CASES.find(x => x.id === c);
+  JP.toast = function (m) { JP.S.toast = m; JP.render(); clearTimeout(JP._tt); JP._tt = setTimeout(() => { JP.S.toast = null; const el = document.querySelector(".toast"); if (el) el.remove(); }, 2200); };
+
+  /* ---------- Philippine time and office hours ---------- */
+  JP.phNow = function () {
+    const p = new Intl.DateTimeFormat("en-US", { timeZone: "Asia/Manila", weekday: "short", hour: "numeric", minute: "numeric", hour12: false }).formatToParts(new Date());
+    const g = k => p.find(x => x.type === k).value;
+    const dow = { Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6, Sun: 7 }[g("weekday")];
+    return { dow, h: (+g("hour")) % 24, m: +g("minute") };
+  };
+  const ampm = h => (h % 12 || 12) + ":00 " + (h < 12 ? "AM" : "PM");
+  JP.hoursText = h => h.t ? JP.t("Open 24 hours") : JP.t("Mon to Fri") + ", " + ampm(h.from) + " to " + ampm(h.to);
+  JP.status = function (h) {
+    if (h.t) return { open: true, label: JP.t("Open now") };
+    const n = JP.phNow(), mins = n.h * 60 + n.m;
+    const open = h.d.includes(n.dow) && mins >= h.from * 60 && mins < h.to * 60;
+    return { open, label: open ? JP.t("Open now") + ", " + JP.t("until") + " " + ampm(h.to) : JP.t("Closed now") + ", " + JP.t("opens") + " " + ampm(h.from) };
+  };
+  JP.supportOnline = () => JP.status({ d: [1, 2, 3, 4, 5], from: 8, to: 17 }).open;
+
+  /* ---------- content index ---------- */
+  JP.TYPES = {
+    right: { label: "Rights", icon: "shield", src: () => JP.RIGHTS, one: "Right" },
+    law: { label: "Laws", icon: "scale", src: () => JP.LAWS, one: "Law" },
+    office: { label: "Institutions", icon: "building", src: () => JP.OFFICES, one: "Institution" },
+    hotline: { label: "Hotlines", icon: "phone", src: () => JP.HOTLINES, one: "Hotline" },
+    req: { label: "Requirements", icon: "list", src: () => JP.REQS, one: "Requirements" },
+    guide: { label: "Guides", icon: "route", src: () => JP.GUIDES, one: "Guide" },
+    link: { label: "Reporting links", icon: "link", src: () => JP.LINKS, one: "Reporting link" }
+  };
+  JP.buildIndex = function () {
+    JP.ALL = []; JP.BY = {};
+    for (const k in JP.TYPES) JP.TYPES[k].src().forEach(o => { o.type = k; JP.ALL.push(o); JP.BY[o.id] = o; });
+  };
+  JP.buildIndex();
+  JP.ofType = (ty, c) => JP.ALL.filter(o => o.type === ty && (!c || o.cases.includes(c)));
+  JP.itemSub = o => o.type === "hotline" ? o.num : o.type === "law" ? o.num : o.type === "office" ? o.addr : o.type === "right" ? o.law : o.type === "link" ? o.url.replace("https://", "") : (o.sum || "");
+  JP.related = function (o, max) {
+    const out = [], seen = new Set([o.id]);
+    (o.rel || []).forEach(id => { const x = JP.BY[id]; if (x && !seen.has(id)) { out.push(x); seen.add(id); } });
+    JP.ALL.forEach(x => { if (out.length < (max || 8) && !seen.has(x.id) && x.cases.some(c => o.cases.includes(c)) && ["req", "guide", "office", "hotline"].includes(x.type) && x.type !== o.type) { out.push(x); seen.add(x.id); } });
+    return out;
+  };
+
+  /* ---------- search (English and Filipino keywords) ---------- */
+  const STOP = new Set("the a an my me i is are to of for and or in on at wont won't dont didnt didn't no not how what where do does can pa na ang ng sa ko ako ay mga ako ba po".split(" "));
+  const norm = s => String(s).toLowerCase().replace(/[’']/g, "").replace(/[^a-z0-9ñ\s-]/g, " ");
+  JP.tokens = q => norm(q).split(/\s+/).filter(w => w.length > 1 && !STOP.has(w));
+  JP.search = function (q, f) {
+    f = f || {}; const toks = JP.tokens(q || ""), res = [];
+    JP.ALL.forEach(o => {
+      if (f.type && o.type !== f.type) return; if (f.c && !o.cases.includes(f.c)) return;
+      if (!toks.length) { res.push({ o, s: 0 }); return; }
+      const title = norm(o.title), hay = norm([o.title, o.sum || "", o.tags || "", o.num || "", o.addr || "", o.law || "", (o.pts || []).join(" "), (o.items || []).join(" "), (o.steps || []).map(s => s.t + " " + s.d).join(" ")].join(" "));
+      const ctags = norm(o.cases.map(c => JP.cobj(c).tags + " " + JP.cobj(c).en).join(" "));
+      let s = 0, hit = 0;
+      toks.forEach(t => { let h = 0; if (title.includes(t)) h = 5; else if (hay.includes(t)) h = 3; else if (ctags.includes(t)) h = 2; if (h) { hit++; s += h; } });
+      if (hit >= Math.ceil(toks.length / 2)) res.push({ o, s: s + ({ guide: 3, office: 2, req: 1 }[o.type] || 0) });
+    });
+    return res.sort((a, b) => b.s - a.s).map(r => r.o);
+  };
+  JP.suggestCases = q => { const toks = JP.tokens(q || ""); if (!toks.length) return []; return JP.CASES.filter(c => { const h = norm(c.tags + " " + c.en + " " + c.fil); return toks.some(t => h.includes(t)); }); };
+
+  /* ---------- router ---------- */
+  JP.go = function (name, params, opt) {
+    const S = JP.S; if (!(opt && opt.replace)) S.stack.push(S.route);
+    S.route = { name, params: params || {} }; S.sheet = null; JP._scroll0 = true; JP.render();
+  };
+  JP.back = function () { const S = JP.S; S.route = S.stack.pop() || { name: "home", params: {} }; S.sheet = null; JP._scroll0 = true; JP.render(); };
+  JP.tab = function (name) { JP.S.stack = []; JP.S.route = { name, params: {} }; JP.S.sheet = null; JP._scroll0 = true; JP.render(); };
+  JP.TABS = ["home", "assistant", "nearby", "library", "profile"];
+  JP.rootOf = n => ({ home: "home", assistant: "assistant", case: "home", list: "home", rl: "home", nearby: "nearby", library: "library", item: "library", messages: "home", chat: "home", notifs: "home", profile: "profile", settings: "profile", dpa: "profile", about: "profile" }[n] || "home");
+
+  /* ---------- shell render ---------- */
+  JP.render = function () {
+    const S = JP.S, root = document.getElementById("app"), prev = root.querySelector("main");
+    const keep = prev && !JP._scroll0 ? prev.scrollTop : 0; JP._scroll0 = false;
+    const set = JP.D.set, de = document.documentElement;
+    de.dataset.size = set.size; de.dataset.hc = set.hc ? "1" : "0"; de.lang = set.lang === "fil" ? "fil" : "en";
+    if (set.theme === "system") de.removeAttribute("data-theme"); else de.dataset.theme = set.theme;
+    if (S.neutral) { root.innerHTML = JP.neutralHTML(); return; }
+    if (S.gate) { root.innerHTML = JP.gateHTML() + (S.toast ? '<div class="toast" role="status">' + JP.esc(S.toast) + "</div>" : ""); if (JP.onRender) JP.onRender(null); return; }
+    if (JP.loadTawk) JP.loadTawk();
+    const v = JP.V[S.route.name] ? JP.V[S.route.name](S.route.params) : { title: "", body: "" };
+    const isRoot = JP.TABS.includes(S.route.name) && S.route.name !== "help";
+    const exit = set.quickExit ? '<button class="tbtn exitbtn" data-act="exit" aria-label="' + JP.t("Quick exit") + '">' + JP.ic("exit", "sm") + JP.t("Quick exit") + "</button>" : "";
+    const left = isRoot
+      ? '<div class="brand-wrap"><div class="brand"><svg class="mark" aria-hidden="true"><use href="#i-logo"/></svg>JustiPath</div>' + (S.route.name === "home" ? '<div class="tagline">' + JP.t("Know your rights. Find your way. Take the next step.") + "</div>" : "") + "</div>"
+      : '<button class="tbtn" data-act="back" aria-label="' + JP.t("Back") + '">' + JP.ic("back") + '</button><h1>' + JP.esc(v.title || "") + "</h1>";
+    const unr0 = JP.NOTIFS.filter(n => !JP.D.readN.includes(n.id)).length;
+    const homeIcons = '<button class="tbtn sm" data-act="go" data-to="chat" aria-label="' + JP.t("Live chat") + '">' + JP.ic("message") + '</button><button class="tbtn sm" data-act="go" data-to="notifs" aria-label="' + JP.t("Notifications") + '">' + JP.ic("bell") + (unr0 ? '<span class="bdot">' + unr0 + "</span>" : "") + "</button>";
+    const gear = isRoot && S.route.name === "home" ? homeIcons : isRoot && S.route.name === "profile" ? '<button class="tbtn" data-act="go" data-to="settings" aria-label="' + JP.t("Settings") + '">' + JP.ic("settings") + "</button>" : "";
+    const unread = JP.NOTIFS.filter(n => !JP.D.readN.includes(n.id)).length;
+    const nav = [["home", "Home", "home"], ["assistant", "Assistant", "spark"], ["nearby", "Nearby", "pin"], ["library", "Library", "book"], ["profile", "Profile", "user"]]
+      .map(([k, l, i]) => '<button data-act="tab" data-to="' + k + '"' + (k === JP.rootOf(S.route.name) ? ' aria-current="page"' : "") + ">" + JP.ic(i) + "<span>" + JP.t(l) + "</span>" + "" + "</button>").join("");
+    root.innerHTML = '<header class="topbar">' + left + gear + exit + '</header><main id="main"' + (v.mainClass ? ' class="' + v.mainClass + '"' : "") + ">" + v.body + "</main>" + (v.composer || "") + (v.noNav ? "" : '<nav class="nav" aria-label="Main">' + nav + "</nav>") + JP.overlayHTML() + (S.toast ? '<div class="toast" role="status">' + JP.esc(S.toast) + "</div>" : "");
+    const m = document.getElementById("main"); if (m) m.scrollTop = keep;
+    if (v.after) v.after();
+    if (JP.onRender) JP.onRender(v);
+  };
+
+  /* ---------- delegated events ---------- */
+  document.addEventListener("click", e => {
+    const el = e.target.closest("[data-act]"); if (!el) return;
+    const a = JP.A[el.dataset.act]; if (a) { if (el.tagName === "A" && !el.dataset.native) e.preventDefault(); a(el, e); }
+  });
+  document.addEventListener("input", e => { const el = e.target.closest("[data-in]"); if (el && JP.I[el.dataset.in]) JP.I[el.dataset.in](el, e); });
+  document.addEventListener("submit", e => { const f = e.target.closest("form[data-submit]"); if (f) { e.preventDefault(); JP.A[f.dataset.submit](f, e); } });
+  document.addEventListener("keydown", e => { if (e.key === "Escape") { if (JP.S.sheet) { JP.S.sheet = null; JP.render(); } } });
+
+  JP.A.back = () => JP.back();
+  JP.A.tab = el => { const to = el.dataset.to; if (to === "help") { JP.S.sheet = { k: "help", c: null }; JP.render(); } else JP.tab(to); };
+  JP.A.go = el => JP.go(el.dataset.to, el.dataset.id ? { id: el.dataset.id, c: el.dataset.c, tab: el.dataset.tab, type: el.dataset.type } : {});
+  JP.A.item = el => JP.go("item", { id: el.dataset.id });
+  JP.A.case = el => JP.go("case", { id: el.dataset.id, tab: el.dataset.tab || "guide" });
+  JP.A.list = el => JP.go("list", { type: el.dataset.type, c: el.dataset.c || "" });
+  JP.A.closeSheet = (el, e) => { if (el.classList.contains("sheet-bg") && e && e.target !== el) return; JP.S.sheet = null; JP.render(); };
+  JP.A.exit = () => { JP.S.neutral = true; JP.S.sheet = null; JP.render(); };
+  JP.A.unexit = () => { JP.S.neutral = false; JP.render(); };
+  JP.A.copy = el => {
+    const txt = el.dataset.txt, done = () => JP.toast(JP.t("Copied") + ": " + txt);
+    try { navigator.clipboard.writeText(txt).then(done, done); } catch (er) { done(); }
+  };
+})();
+
+</script>
+<script>
+/* JustiPath views, part 1: home, case, lists, library, item detail. */
+(function () {
+  const JP = window.JP, esc = JP.esc, ic = JP.ic, t = JP.t;
+  const tel = n => "tel:" + (n.match(/^[+\d()\s-]+/) || [n])[0].replace(/[^\d+]/g, "");
+  const mapUrl = q => "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(q + " near me");
+  JP.tel = tel; JP.mapUrl = mapUrl;
+
+  const iboxCls = o => o.cases.length === 1 ? o.cases[0] : "";
+  const caseBadges = o => o.cases.map(c => '<span class="badge ' + c + '">' + esc(JP.cname(c).split(" /")[0]) + "</span>").join("");
+  JP.statusBadge = h => { const s = JP.status(h); return '<span class="badge ' + (s.open ? "open" : "closed") + '">' + ic(s.open ? "check" : "clock", "sm") + esc(s.label) + "</span>"; };
+  JP.verBadge = v => v === "src" ? '<span class="badge ok">' + ic("check", "sm") + t("Source-checked") + ": ehotlines.e.gov.ph, " + JP.CHECKED + "</span>" : '<span class="badge warn">' + ic("alert", "sm") + t("Please verify before use") + "</span>";
+
+  JP.rowHTML = function (o, showType) {
+    const ty = JP.TYPES[o.type];
+    let side = "";
+    if (o.type === "office") side = JP.statusBadge(o.hours);
+    if (o.type === "hotline") side = '<span class="num" style="font-size:1rem">' + esc(o.num) + "</span>";
+    const sub = o.type === "office" ? o.handles : o.type === "hotline" ? o.when : o.type === "law" ? o.num + ". " + o.sum : o.sum || "";
+    return '<button class="row" data-act="item" data-id="' + o.id + '"><span class="ibox ' + iboxCls(o) + '">' + ic(ty.icon) + '</span><span class="grow"><span class="t">' + esc(o.title) + '</span><br><span class="s">' + esc(sub) + '</span><span class="bar" style="margin-top:4px">' + (showType ? '<span class="badge">' + t(ty.one) + "</span>" : "") + caseBadges(o) + side + "</span></span>" + ic("chev", "sm chev") + "</button>";
+  };
+
+  /* ---------- HOME ---------- */
+  JP.V.home = function () {
+    const u = JP.D.session ? JP.D.users[JP.D.session] : null, name = u ? u.name.split(" ")[0] : null;
+    const chips = JP.CASES.map(c => '<button class="bchip ' + c.id + '" data-act="case" data-id="' + c.id + '">' + ic(c.icon) + esc(c[JP.lang()].split(" /")[0]) + "</button>").join("");
+    const sos = !!JP.S.sos, who = esc(name || t("there"));
+    const msg = sos
+      ? '<button class="msgbtn" data-act="bubble" aria-live="polite"><b>' + t("Need Immediate Help? Call 911") + '</b><small>' + t("Tap here to go back") + "</small></button>" +
+        '<a class="btn red block" href="tel:911" data-native="1" aria-label="' + t("Call 911 now") + '">' + ic("phone", "sm") + t("Call 911 now") + '</a><p class="lede" style="font-size:.74rem">' + t("Your phone will open its dialer with 911 ready. Press the green call button if it does not dial by itself.") + "</p>"
+      : '<button class="msgbtn" data-act="bubble" aria-live="polite"><b>' + t("Hello") + ", " + who + "!</b> " + t("How can I help you?") + '<small>' + t("Tap this message for emergency help") + "</small></button>";
+    const M = [
+      ["rl", "scale", "Rights | Laws", "Know your rights and the laws behind them", "go", ""],
+      ["office", "building", "Institutions", "Who to go to, with open or closed hours", "list", ""],
+      ["guide", "route", "Reporting Instructions", "Step by step, from incident to filing", "list", ""],
+      ["help", "phone", "Hotlines", "911 and hotlines for your case", "tab", "em"],
+      ["chat", "headset", "Support", "Chat with us about using the app", "go", ""],
+      ["settings", "settings", "Settings", "Language, text size, privacy", "go", ""]
+    ].map(([k, i, l, sub, act, cls]) => '<button class="mrow ' + cls + '" data-act="' + act + '" ' + (act === "list" ? 'data-type="' + k + '"' : 'data-to="' + k + '"') + '><span class="mi">' + ic(i) + '</span><span class="mt">' + t(l) + '<span class="ms">' + t(sub) + "</span></span>" + ic("chev", "sm chev") + "</button>").join("");
+    return { title: "Home", body:
+      '<section class="guide"><button class="mascot" data-act="pickGuide" aria-label="' + t("Choose your guide") + '">' + JP.avatar(JP.curChar(), sos ? "sos" : "greet") + '<span>' + esc(JP.curChar().short) + '</span><em>' + t("Tap to change") + '</em></button><div class="bubble rd' + (sos ? " sos" : "") + '">' + msg + JP.spk(t("Read aloud"), "abs") + '<div class="bchips" role="group" aria-label="' + t("What happened?") + '">' + chips + "</div></div></section>" +
+      '<nav class="menu" aria-label="' + t("Browse by section") + '">' + M + "</nav>" +
+      '<div class="note info">' + ic("info", "sm") + "<span>" + t("JustiPath gives general information only. It is not legal advice, and it does not file cases for you.") + "</span></div>" +
+      '<form class="bsearch" data-submit="homeSearch" role="search"><div class="search">' + ic("search") + '<input id="hq" type="search" placeholder="' + esc(t("Search: boss won’t pay me, na-hack ang account")) + '" aria-label="' + t("Search") + '" autocomplete="off"><button class="go" type="submit" aria-label="' + t("Search") + '">' + ic("chev", "sm") + "</button></div></form>" };
+  };
+
+  /* ---------- RIGHTS | LAWS (combined list) ---------- */
+  JP.V.rl = function (p) {
+    const ty = p.type || "right", c = p.c || "";
+    const seg = '<div class="seg"><button data-act="rlTab" data-type="right" data-c="' + c + '" aria-pressed="' + (ty === "right") + '">' + t("Rights") + '</button><button data-act="rlTab" data-type="law" data-c="' + c + '" aria-pressed="' + (ty === "law") + '">' + t("Laws") + "</button></div>";
+    const chips = '<div class="chips"><button class="chip" aria-pressed="' + !c + '" data-act="rlTab" data-type="' + ty + '" data-c="">' + t("All") + "</button>" + JP.CASES.map(x => '<button class="chip" aria-pressed="' + (c === x.id) + '" data-act="rlTab" data-type="' + ty + '" data-c="' + x.id + '">' + esc(x[JP.lang()].split(" /")[0]) + "</button>").join("") + "</div>";
+    const items = JP.ofType(ty, c);
+    return { title: t("Rights") + " | " + t("Laws"), body: seg + chips + '<div class="card pad0">' + (items.length ? items.map(o => JP.rowHTML(o)).join("") : '<p class="empty">' + t("Nothing here yet.") + "</p>") + "</div>" };
+  };
+  JP.A.rlTab = el => { JP.S.route = { name: "rl", params: { type: el.dataset.type, c: el.dataset.c } }; JP.render(); };
+
+  /* ---------- NEARBY (offices open now, with map) ---------- */
+  JP.nb = JP.nb || { c: "" };
+  JP.V.nearby = function () {
+    const c = JP.nb.c;
+    const chips = '<div class="chips"><button class="chip" aria-pressed="' + !c + '" data-act="nbCase" data-c="">' + t("All cases") + "</button>" + JP.CASES.map(x => '<button class="chip" aria-pressed="' + (c === x.id) + '" data-act="nbCase" data-c="' + x.id + '">' + esc(x[JP.lang()].split(" /")[0]) + "</button>").join("") + "</div>";
+    const items = JP.OFFICES.filter(o => !c || o.cases.includes(c)).sort((a, b) => JP.status(b.hours).open - JP.status(a.hours).open);
+    const rows = items.map(o => '<div class="mini"><span class="ibox ' + iboxCls(o) + '">' + ic("building") + '</span><span class="grow" style="flex:1;min-width:0"><button class="linkbtn" data-act="item" data-id="' + o.id + '" style="text-align:left;color:var(--ink);font-weight:700;padding:0">' + esc(o.title) + "</button><br>" + JP.statusBadge(o.hours) + '</span><a class="btn sec sm" href="' + mapUrl(o.q) + '" target="_blank" rel="noopener" aria-label="' + t("Map") + " " + esc(o.title) + '">' + ic("pin", "sm") + t("Map") + "</a></div>").join("");
+    return { title: "Nearby", body: '<h2 class="h2">' + t("Nearby") + '</h2><p class="lede">' + t("Tap Map to search near your current location. Hours may vary, so call before you go.") + "</p>" + chips + '<div class="card pad0">' + rows + '</div><div class="note">' + ic("info", "sm") + "<span>" + t("Open or closed is shown in Philippine time.") + "</span></div>" };
+  };
+  JP.A.nbCase = el => { JP.nb.c = el.dataset.c; JP.render(); };
+  JP.A.bubble = () => { JP.S.sos = !JP.S.sos; JP.render(); };
+  JP.A.homeSearch = f => { const q = f.querySelector("input").value.trim(); JP.lib = { q, type: "", c: "" }; if (q && JP.D.set.saveSearch) { JP.D.recent = [q].concat(JP.D.recent.filter(x => x !== q)).slice(0, 5); JP.save(); } JP.go("library"); };
+
+  /* ---------- CASE ---------- */
+  const CTABS = [["guide", "Guide"], ["checklist", "Checklist"], ["right", "Rights"], ["law", "Laws"], ["office", "Institutions"], ["hotline", "Hotlines"], ["link", "Links"]];
+  JP.stepsHTML = g => '<ol class="steps">' + g.steps.map((s, i) => '<li class="step rd">' + JP.spk(t("Read aloud"), "abs") + '<span class="n">' + (i + 1) + '</span><div><h3 class="h3">' + esc(s.t) + '</h3><p class="lede">' + esc(s.d) + '</p><p class="x"><b>' + t("What to expect") + ":</b> " + esc(s.x) + "</p></div></li>").join("") + "</ol>";
+  JP.checklistHTML = function (q) {
+    const done = JP.D.checks[q.id] || [], pct = Math.round(done.length / q.items.length * 100);
+    return '<div class="card"><div class="sec-h"><span class="h3">' + done.length + " / " + q.items.length + " " + t("ready") + '</span><span class="lede">' + pct + '%</span></div><div class="progress" role="progressbar" aria-valuenow="' + pct + '" aria-valuemin="0" aria-valuemax="100"><i style="width:' + pct + '%"></i></div></div><div class="card pad0">' +
+      q.items.map((x, i) => '<button class="check" role="checkbox" aria-checked="' + done.includes(i) + '" data-act="tick" data-id="' + q.id + '" data-i="' + i + '"><span class="box">' + (done.includes(i) ? ic("check", "sm") : "") + '</span><span class="lbl">' + esc(x) + "</span></button>").join("") + "</div>";
+  };
+  JP.A.tick = el => { const id = el.dataset.id, i = +el.dataset.i, a = JP.D.checks[id] || (JP.D.checks[id] = []); const k = a.indexOf(i); if (k >= 0) a.splice(k, 1); else a.push(i); JP.save(); JP.render(); };
+
+  JP.V.case = function (p) {
+    const c = JP.cobj(p.id), tab = p.tab || "guide";
+    const first = JP.OFFICES.find(o => o.cases.includes(c.id) && o.id !== "o-pao" && o.id !== "o-prosecutor") || JP.OFFICES[0];
+    const tabs = '<div class="tabs" role="tablist">' + CTABS.map(([k, l]) => '<button role="tab" aria-selected="' + (k === tab) + '" data-act="caseTab" data-id="' + c.id + '" data-tab="' + k + '">' + t(l) + "</button>").join("") + "</div>";
+    let body;
+    if (tab === "guide") body = JP.stepsHTML(JP.GUIDES.find(g => g.cases[0] === c.id));
+    else if (tab === "checklist") body = JP.checklistHTML(JP.REQS.find(q => q.cases[0] === c.id));
+    else body = '<div class="card pad0">' + JP.ofType(tab, c.id).map(o => JP.rowHTML(o)).join("") + "</div>";
+    return { title: c[JP.lang()], body:
+      '<section class="card"><div style="display:flex;gap:12px;align-items:center"><span class="ibox ' + c.id + '">' + ic(c.icon) + '</span><div><h2 class="h2">' + esc(c[JP.lang()]) + '</h2><p class="lede">' + esc(c.sub[JP.lang()]) + '</p></div></div><div class="note info">' + ic("route", "sm") + "<span><b>" + t("Start here") + ":</b> " + esc(c.first[JP.lang()]) + "</span></div></section>" +
+      '<button class="sosbtn" data-act="helpCase" data-c="' + c.id + '" style="padding:10px 14px">' + ic("alert") + "<span style=\"font-size:1rem\">" + t("Need help now?") + "</span></button>" + tabs + body +
+      '<button class="btn sec block" data-act="libCase" data-c="' + c.id + '">' + ic("book", "sm") + t("Open everything for this case in the Library") + "</button>" };
+  };
+  JP.A.caseTab = el => { JP.S.route = { name: "case", params: { id: el.dataset.id, tab: el.dataset.tab } }; JP.render(); };
+  JP.A.libCase = el => { JP.lib = { q: "", type: "", c: el.dataset.c }; JP.go("library"); };
+  JP.A.helpCase = el => { JP.S.sheet = { k: "help", c: el.dataset.c }; JP.render(); };
+
+  /* ---------- LIST (one category only) ---------- */
+  JP.V.list = function (p) {
+    const ty = JP.TYPES[p.type], c = p.c || "";
+    const chips = '<div class="chips"><button class="chip" aria-pressed="' + !c + '" data-act="listCase" data-type="' + p.type + '" data-c="">' + t("All") + "</button>" + JP.CASES.map(x => '<button class="chip" aria-pressed="' + (c === x.id) + '" data-act="listCase" data-type="' + p.type + '" data-c="' + x.id + '">' + esc(x[JP.lang()].split(" /")[0]) + "</button>").join("") + "</div>";
+    let items = JP.ofType(p.type, c);
+    let catChips = "";
+    if (p.type === "hotline") {
+      const cats = ["Emergency", "Security", "Social Services", "Mental Health", "Disaster", "Weather", "Transport", "Utilities"], cat = p.cat || "";
+      catChips = '<div class="chips"><button class="chip" aria-pressed="' + !cat + '" data-act="listCat" data-c="' + c + '" data-cat="">' + t("All types") + "</button>" + cats.map(k => '<button class="chip" aria-pressed="' + (cat === k) + '" data-act="listCat" data-c="' + c + '" data-cat="' + k + '">' + t(k) + "</button>").join("") + "</div>";
+      if (cat) items = items.filter(o => o.cat === cat);
+    }
+    const intro = { right: "Plain-language rights only. Each one points to the law behind it.", law: "Laws only, with a short summary of what each one does.", office: "Where to go. Open or closed is shown in Philippine time.", hotline: "Tap a hotline to see when to use it.", req: "Documents to prepare, with tick boxes.", guide: "Where to start and what happens next.", link: "Official websites and email addresses for reporting." }[p.type];
+    return { title: t(ty.label), body: '<p class="lede">' + t(intro) + "</p>" + chips + catChips + (p.type === "hotline" ? '<p class="lede" style="font-size:.78rem">' + t("Numbers follow the government e-Hotlines directory (ehotlines.e.gov.ph).") + "</p>" : "") + '<div class="card pad0">' + (items.length ? items.map(o => JP.rowHTML(o)).join("") : '<p class="empty">' + t("Nothing here yet.") + "</p>") + "</div>" };
+  };
+  JP.A.listCase = el => { JP.S.route = { name: "list", params: { type: el.dataset.type, c: el.dataset.c, cat: (JP.S.route.params || {}).cat || "" } }; JP.render(); };
+  JP.A.listCat = el => { JP.S.route = { name: "list", params: { type: "hotline", c: el.dataset.c || "", cat: el.dataset.cat } }; JP.render(); };
+
+  /* ---------- LIBRARY (everything, with search) ---------- */
+  JP.lib = JP.lib || { q: "", type: "", c: "" };
+  function libResults() {
+    const L = JP.lib, items = JP.search(L.q, { type: L.type, c: L.c });
+    const sug = L.q ? JP.suggestCases(L.q) : [];
+    const sh = sug.length ? '<div class="note info">' + ic("route", "sm") + "<span>" + t("This looks like") + ": " + sug.map(c => '<button class="linkbtn" data-act="case" data-id="' + c.id + '">' + esc(c[JP.lang()]) + "</button>").join(" · ") + "</span></div>" : "";
+    return sh + '<p class="lede" id="count">' + items.length + " " + t("results") + "</p>" + '<div class="card pad0">' + (items.length ? items.map(o => JP.rowHTML(o, true)).join("") : '<p class="empty">' + t("No results. Try other words, like sahod, pulis, or hotline.") + "</p>") + "</div>";
+  }
+  JP.V.library = function () {
+    const L = JP.lib;
+    const tchips = '<div class="chips"><button class="chip" aria-pressed="' + !L.type + '" data-act="libType" data-type="">' + t("All") + "</button>" + Object.keys(JP.TYPES).map(k => '<button class="chip" aria-pressed="' + (L.type === k) + '" data-act="libType" data-type="' + k + '">' + ic(JP.TYPES[k].icon, "sm") + t(JP.TYPES[k].label) + "</button>").join("") + "</div>";
+    const cchips = '<div class="chips"><button class="chip" aria-pressed="' + !L.c + '" data-act="libC" data-c="">' + t("All cases") + "</button>" + JP.CASES.map(x => '<button class="chip" aria-pressed="' + (L.c === x.id) + '" data-act="libC" data-c="' + x.id + '">' + esc(x[JP.lang()].split(" /")[0]) + "</button>").join("") + "</div>";
+    const recent = JP.D.set.saveSearch && JP.D.recent.length ? '<div class="chips">' + JP.D.recent.map(r => '<button class="chip" data-act="libQ" data-q="' + esc(r) + '">' + ic("clock", "sm") + esc(r) + "</button>").join("") + "</div>" : "";
+    return { title: "Library", body: '<h2 class="h2">' + t("Library") + '</h2><p class="lede">' + t("Every right, law, institution, hotline, checklist, guide, and link in one place.") + '</p><div class="search">' + ic("search") + '<input id="lq" type="search" data-in="lib" value="' + esc(L.q) + '" placeholder="' + esc(t("Search rights, laws, offices, hotlines")) + '" aria-label="' + t("Search") + '" autocomplete="off"></div>' + recent + tchips + cchips + '<div id="results" style="display:flex;flex-direction:column;gap:12px">' + libResults() + "</div>" };
+  };
+  JP.I.lib = el => { JP.lib.q = el.value; document.getElementById("results").innerHTML = libResults(); };
+  JP.A.libType = el => { JP.lib.type = el.dataset.type; JP.render(); };
+  JP.A.libC = el => { JP.lib.c = el.dataset.c; JP.render(); };
+  JP.A.libQ = el => { JP.lib.q = el.dataset.q; JP.render(); };
+
+  /* ---------- ITEM DETAIL ---------- */
+  JP.V.item = function (p) {
+    const o = JP.BY[p.id]; if (!o) return { title: "", body: "" }; const ty = JP.TYPES[o.type];
+    const saved = JP.D.saved.includes(o.id);
+    let b = "";
+    if (o.type === "law") b = '<p class="lede">' + esc(o.num) + "</p><p>" + esc(o.sum) + '</p><ul style="margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px">' + o.pts.map(x => "<li>" + esc(x) + "</li>").join("") + "</ul>";
+    if (o.type === "right") b = "<p>" + esc(o.sum) + '</p><p class="lede">' + t("Based on") + ": " + esc(o.law) + "</p>";
+    if (o.type === "office") b = "<p>" + esc(o.sum) + '</p><dl class="kv"><dt>' + t("Address") + "</dt><dd>" + esc(o.addr) + "</dd><dt>" + t("Hours") + "</dt><dd>" + esc(JP.hoursText(o.hours)) + "<br>" + JP.statusBadge(o.hours) + "</dd><dt>" + t("Handles") + "</dt><dd>" + esc(o.handles) + "</dd><dt>" + t("Note") + "</dt><dd>" + esc(o.note) + '</dd></dl><div class="bar"><a class="btn" href="' + mapUrl(o.q) + '" target="_blank" rel="noopener">' + ic("pin", "sm") + t("Map") + "</a></div>";
+    if (o.type === "hotline") b = '<div class="numrow" style="border:0;padding:0"><span class="num" style="font-size:1.8rem">' + esc(o.num) + "</span></div>" + (o.alt ? '<p class="lede">' + t("Also") + ": <span class=\"num\" style=\"font-size:1rem\">" + esc(o.alt) + "</span></p>" : "") + "<p><b>" + t("When to use") + ":</b> " + esc(o.when) + "</p>" + JP.verBadge(o.v) + '<div class="bar"><a class="btn red" href="' + tel(o.num) + '">' + ic("phone", "sm") + t("Call") + '</a><button class="btn sec" data-act="copy" data-txt="' + esc(o.num) + '">' + ic("copy", "sm") + t("Copy number") + '</button></div><p class="lede">' + t("If Call does nothing, dial the number on your phone.") + "</p>";
+    if (o.type === "req") b = "<p>" + esc(o.sum) + "</p>" + JP.checklistHTML(o);
+    if (o.type === "guide") b = "<p>" + esc(o.sum) + "</p>" + JP.stepsHTML(o);
+    if (o.type === "link") b = "<p>" + esc(o.sum) + '</p><dl class="kv"><dt>' + t("Website") + "</dt><dd>" + esc(o.url) + "</dd>" + (o.email ? "<dt>" + t("Email") + "</dt><dd>" + esc(o.email) + "</dd>" : "") + "</dl>" + JP.verBadge("chk") + '<div class="bar"><a class="btn" href="' + esc(o.url) + '" target="_blank" rel="noopener">' + ic("external", "sm") + t("Open official site") + "</a>" + (o.email ? '<button class="btn sec" data-act="copy" data-txt="' + esc(o.email) + '">' + ic("copy", "sm") + t("Copy email") + "</button>" : "") + "</div>";
+    const rel = JP.related(o);
+    const relHTML = rel.length ? '<div class="sec-h"><h2 class="h2">' + t("Linked to this") + '</h2></div><div class="card pad0">' + rel.map(x => JP.rowHTML(x, true)).join("") + "</div>" : "";
+    return { title: t(ty.one), body:
+      '<section class="card rd">' + JP.spk(t("Read aloud"), "abs") + '<div style="display:flex;gap:12px;align-items:flex-start"><span class="ibox ' + iboxCls(o) + '">' + ic(ty.icon) + '</span><div style="min-width:0"><h2 class="h2">' + esc(o.title) + '</h2><div class="bar" style="margin-top:6px"><span class="badge">' + t(ty.one) + "</span>" + caseBadges(o) + "</div></div></div>" + b +
+      '<div class="bar"><button class="btn sec sm" data-act="save" data-id="' + o.id + '" aria-pressed="' + saved + '">' + ic("bookmark", "sm") + (saved ? t("Saved") : t("Save")) + "</button></div></section>" + relHTML +
+      '<div class="note">' + ic("info", "sm") + "<span>" + t("General information only. Confirm details with the office before you go.") + "</span></div>" };
+  };
+  JP.A.save = el => { const id = el.dataset.id, a = JP.D.saved, i = a.indexOf(id); if (i >= 0) a.splice(i, 1); else a.push(id); JP.save(); JP.render(); JP.toast(i >= 0 ? t("Removed from saved") : t("Saved to your profile")); };
+})();
+
+</script>
+<script>
+/* JustiPath views, part 2: help sheet, gate (privacy consent, log in), messages, chat, profile, settings. */
+(function () {
+  const JP = window.JP, esc = JP.esc, ic = JP.ic, t = JP.t, S = JP.S;
+  JP.REGIONS = ["NCR (Metro Manila)", "CAR (Cordillera)", "Region I (Ilocos)", "Region II (Cagayan Valley)", "Region III (Central Luzon)", "Region IV-A (CALABARZON)", "MIMAROPA", "Region V (Bicol)", "Region VI (Western Visayas)", "Region VII (Central Visayas)", "Region VIII (Eastern Visayas)", "Region IX (Zamboanga Peninsula)", "Region X (Northern Mindanao)", "Region XI (Davao)", "Region XII (SOCCSKSARGEN)", "Region XIII (Caraga)", "BARMM"];
+  const hashFb = (email, pw) => btoa(unescape(encodeURIComponent(email + pw)));
+  const hash = async (email, pw) => { try { const b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode("jp:" + email + ":" + pw)); return Array.from(new Uint8Array(b)).map(x => x.toString(16).padStart(2, "0")).join(""); } catch (e) { return btoa(unescape(encodeURIComponent(email + pw))); } };
+  const field = (id, label, type, val, extra) => '<div class="field"><label for="' + id + '">' + t(label) + '</label><input id="' + id + '" name="' + id + '" type="' + type + '" value="' + esc(val || "") + '" ' + (extra || "") + "></div>";
+  const regionSel = v => '<div class="field"><label for="region">' + t("Region") + '</label><select id="region" name="region">' + JP.REGIONS.map(r => '<option' + (r === v ? " selected" : "") + ">" + esc(r) + "</option>").join("") + "</select></div>";
+
+  /* ---------- overlays: help sheet and confirm ---------- */
+  JP.overlayHTML = function () {
+    const sh = S.sheet; if (!sh) return "";
+    if (sh.k === "confirm") return '<div class="sheet-bg" data-act="closeSheet"><div class="sheet" role="dialog" aria-modal="true"><div class="grab"></div><h2 class="h2">' + esc(sh.title) + '</h2><p class="lede">' + esc(sh.msg) + '</p><div class="bar"><button class="btn red" data-act="doConfirm">' + esc(sh.label) + '</button><button class="btn sec" data-act="closeSheet">' + t("Cancel") + "</button></div></div></div>";
+    const c = sh.c || "", list = JP.HOTLINES.filter(h => (!c || h.cases.includes(c)) && h.id !== "h-911").sort((a, b) => b.em - a.em);
+    const chips = '<div class="chips"><button class="chip" aria-pressed="' + !c + '" data-act="helpCase" data-c="">' + t("All") + "</button>" + JP.CASES.map(x => '<button class="chip" aria-pressed="' + (c === x.id) + '" data-act="helpCase" data-c="' + x.id + '">' + esc(x[JP.lang()].split(" /")[0]) + "</button>").join("") + "</div>";
+    const h911 = JP.BY["h-911"];
+    return '<div class="sheet-bg" data-act="closeSheet"><div class="sheet" role="dialog" aria-modal="true" aria-label="' + t("Need help now?") + '"><div class="grab"></div><div class="sec-h"><h2 class="h2">' + t("Need help now?") + '</h2><button class="tbtn" style="background:var(--surface-2);color:var(--ink)" data-act="closeSheet" aria-label="' + t("Close") + '">' + ic("x") + '</button></div>' +
+      '<div class="card" style="background:var(--red-soft);border-color:var(--red)"><span class="badge closed">' + ic("alert", "sm") + t("In danger? Call first") + '</span><div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap"><span class="num" style="font-size:2.4rem">911</span><span class="lede" style="flex:1;min-width:140px">' + t("National Emergency Hotline") + '</span></div><div class="bar"><a class="btn red" href="tel:911">' + ic("phone", "sm") + t("Call") + ' 911</a><button class="btn sec" data-act="copy" data-txt="911">' + ic("copy", "sm") + t("Copy number") + '</button></div></div>' +
+      '<p class="lede">' + t("Pick your case to see the hotlines that fit. If Call does nothing, dial the number on your phone.") + "</p>" + chips +
+      '<div class="card pad0">' + list.map(h => '<div class="numrow"><span class="ibox">' + ic("phone") + '</span><div style="flex:1;min-width:0"><div class="t" style="font-weight:700">' + esc(h.title) + '</div><div class="lede" style="font-size:.78rem">' + esc(h.when) + '</div><span class="num" style="font-size:1.1rem">' + esc(h.num) + "</span></div>" + '<a class="btn sm" href="' + JP.tel(h.num) + '" aria-label="' + t("Call") + " " + esc(h.title) + '">' + ic("phone", "sm") + '</a><button class="btn sec sm" data-act="copy" data-txt="' + esc(h.num) + '" aria-label="' + t("Copy number") + '">' + ic("copy", "sm") + "</button></div>").join("") + "</div>" +
+      '<button class="btn sec block" data-act="list" data-type="hotline">' + t("See all hotlines") + "</button></div></div>";
+  };
+  JP.A.doConfirm = () => { const a = S.sheet && S.sheet.act; S.sheet = null; if (a && JP.A[a]) JP.A[a](); };
+  const confirm = (title, msg, label, act) => { S.sheet = { k: "confirm", title, msg, label, act }; JP.render(); };
+
+  /* ---------- neutral screen for quick exit ---------- */
+  JP.neutralHTML = () => '<div class="weather"><p>Manila</p><div class="big">31°</div><p>Partly cloudy</p><p style="opacity:.8">H 33°  L 26°</p><div style="flex:1"></div><button class="linkbtn" style="color:#0b2a4a;opacity:.55;font-size:.8rem" data-act="unexit">Back</button></div>';
+
+  /* ---------- gate: consent then log in ---------- */
+  const NOTICE = [
+    ["Who we are", "JustiPath is a Philippine student prototype that guides people to rights, laws, institutions, and hotlines. This notice follows the Data Privacy Act of 2012 (Republic Act No. 10173)."],
+    ["What we collect", "Only what you type: your name, email, mobile number, region, and an optional emergency contact. Your checklist ticks, saved items, settings, and chat messages are also kept. We do not ask for case details."],
+    ["Why we collect it", "To let you log in, personalize the app, and let our support team answer app questions. We do not use your data for advertising and we do not sell it."],
+    ["Where it is kept", "In this prototype your data stays on your own device. Clearing your data in Settings removes it."],
+    ["Your rights", "You may be informed, access and correct your data, object to its use, ask for its erasure or blocking, claim damages, and move your data. You may file a complaint with the National Privacy Commission (privacy.gov.ph)."],
+    ["Live chat", "If live chat with a support agent is turned on, your messages and the name and email on your account are handled by a third-party chat provider (Tawk.to) so the agent can reply. Do not send case details."],
+    ["Sensitive details", "Please do not type case details, names of victims, or private documents into the live chat. Use the quick exit button if someone may see your screen."]
+  ];
+JP.creditHTML = () => '<p class="lede" style="text-align:center;font-size:.8rem">' + t("Created by") + " <b>" + esc(JP.OWNER.real) + "</b> (" + esc(JP.OWNER.alias) + ") · © " + JP.OWNER.year + "</p>";
+  JP.noticeHTML = () => NOTICE.map(([h, p]) => "<div><h4>" + t(h) + "</h4><p>" + t(p) + "</p></div>").join("");
+  JP.gateHTML = function () {
+    const logo = '<div class="logo"><svg aria-hidden="true"><use href="#i-logo"/></svg>JustiPath</div><div class="flag"></div>';
+    const lang = '<div class="seg" style="max-width:200px"><button data-act="setSet" data-k="lang" data-v="en" aria-pressed="' + (JP.lang() === "en") + '">English</button><button data-act="setSet" data-k="lang" data-v="fil" aria-pressed="' + (JP.lang() === "fil") + '">Filipino</button></div>';
+    if (S.gate === "consent") return '<div class="full"><div class="cover">' + logo + lang + "<h1 style=\"font-size:1.5rem\">" + t("Data Privacy Act notice") + '</h1><p class="lede">' + t("Please read this before using JustiPath.") + '</p><div class="card dpa" tabindex="0">' + JP.noticeHTML() + '</div><button class="check card" role="checkbox" aria-checked="' + !!S.agree + '" data-act="agree" style="border:1px solid var(--line);border-radius:14px"><span class="box">' + (S.agree ? ic("check", "sm") : "") + "</span><span class=\"lbl\" style=\"text-decoration:none;color:var(--ink)\">" + t("I have read the notice and I agree to the processing of my information under the Data Privacy Act (RA 10173).") + '</span></button><button class="btn block" data-act="consent" ' + (S.agree ? "" : "disabled") + ">" + t("Agree and continue") + '</button><button class="btn sec block" data-act="decline">' + t("Decline") + "</button>" + JP.creditHTML() + "</div></div>";
+    const reg = S.authMode === "register", e = S.err ? '<p class="err" role="alert" style="color:var(--red);font-size:.85rem">' + esc(S.err) + "</p>" : "";
+    return '<div class="full"><div class="cover">' + logo + lang + "<h1 style=\"font-size:1.5rem\">" + (reg ? t("Create your account") : t("Log in")) + "</h1>" +
+      '<div class="seg"><button data-act="authMode" data-v="login" aria-pressed="' + !reg + '">' + t("Log in") + '</button><button data-act="authMode" data-v="register" aria-pressed="' + reg + '">' + t("Create account") + "</button></div>" +
+      '<form data-submit="auth" style="display:flex;flex-direction:column;gap:12px" novalidate>' + (reg ? field("name", "Full name", "text", "", 'autocomplete="name"') : "") + field("email", "Email account", "email", reg ? "" : (JP.D.lastEmail || ""), 'autocomplete="email" inputmode="email"') + (reg ? field("mobile", "Mobile number (09XX XXX XXXX or +63)", "tel", "", 'autocomplete="tel" inputmode="tel"') + regionSel("") : "") + field("pw", "Password", "password", "", 'autocomplete="' + (reg ? "new-password" : "current-password") + '"') + (reg ? field("pw2", "Confirm password", "password", "", 'autocomplete="new-password"') : "") + e + '<button class="btn block" type="submit">' + (reg ? t("Create account") : t("Log in")) + "</button></form>" +
+      '<button class="btn sec block" data-act="guest">' + t("Continue without an account") + '</button><p class="lede">' + t("Your account is saved on this device. Next time, log in with the same email and password.") + "</p>" + JP.creditHTML() + "</div></div>";
+  };
+  JP.A.agree = () => { S.agree = !S.agree; JP.render(); };
+  JP.A.decline = () => JP.toast(t("You need to agree to the Data Privacy Act notice to use JustiPath."));
+  JP.A.consent = () => { if (!S.agree) return; JP.D.consent = { ts: new Date().toISOString(), v: 1 }; JP.save(); S.gate = (JP.D.session || JP.D.guest) ? null : "auth"; JP.render(); };
+  JP.A.authMode = el => { S.authMode = el.dataset.v; S.err = ""; JP.render(); };
+  JP.A.guest = () => { JP.D.guest = true; JP.save(); S.gate = null; S.err = ""; JP.render(); };
+  JP.A.auth = async f => {
+    const v = n => (f.elements[n] ? f.elements[n].value.trim() : ""), email = v("email").toLowerCase(), pw = f.elements.pw.value;
+    const fail = m => { S.err = m; JP.render(); };
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return fail(t("Enter a valid email address."));
+    if (S.authMode === "register") {
+      const mobile = v("mobile").replace(/[\s-]/g, "");
+      if (v("name").length < 2) return fail(t("Enter your full name."));
+      if (!/^(09|\+639)\d{9}$/.test(mobile)) return fail(t("Enter a Philippine mobile number, like 0917 123 4567."));
+      if (pw.length < 8) return fail(t("Use at least 8 characters for your password."));
+      if (pw !== f.elements.pw2.value) return fail(t("The passwords do not match."));
+      if (JP.D.users[email]) return fail(t("This email already has an account. Log in instead."));
+      JP.D.users[email] = { name: v("name"), mobile, region: v("region"), pass: await hash(email, pw), created: Date.now() };
+    } else {
+      const u = JP.D.users[email];
+      if (!u || (u.pass !== await hash(email, pw) && u.pass !== hashFb(email, pw))) return fail(t("Email or password is incorrect."));
+    }
+    JP.D.session = email; JP.D.lastEmail = email; JP.D.guest = false; JP.save(); S.gate = null; S.err = ""; S.stack = []; S.route = { name: "home", params: {} }; JP.render(); JP.toast(S.authMode === "register" ? t("Account created and saved on this device") : t("Logged in"));
+  };
+  JP.A.logout = () => { JP.D.session = null; JP.D.guest = false; JP.save(); S.gate = "auth"; S.authMode = "login"; S.stack = []; S.route = { name: "home", params: {} }; S.sheet = null; JP.render(); };
+
+  /* ---------- real live chat (Tawk.to) ---------- */
+  JP.liveReady = () => !!(JP.CHAT && JP.CHAT.tawkProperty && JP.CHAT.tawkWidget);
+  JP.loadTawk = function () {
+    if (JP._tawk || !JP.liveReady() || !JP.D.consent) return; JP._tawk = true;
+    window.Tawk_API = window.Tawk_API || {};
+    window.Tawk_API.onLoad = function () {
+      try { window.Tawk_API.hideWidget(); const u = JP.D.session && JP.D.users[JP.D.session]; if (u) window.Tawk_API.setAttributes({ name: u.name, email: JP.D.session }, function () {}); } catch (e) {}
+      JP._tawkOn = true; if (JP.S.route.name === "chat") JP.render();
+    };
+    const live = on => () => { JP.creatorLive = on; if (JP.S.route.name === "chat") JP.render(); };
+    window.Tawk_API.onAgentJoinChat = live(true); window.Tawk_API.onChatMessageAgent = live(true); window.Tawk_API.onChatEnded = live(false); window.Tawk_API.onAgentLeaveChat = live(false);
+    window.Tawk_API.onChatMaximized = function () { JP._tawkOpen = true; };
+    window.Tawk_API.onChatMinimized = function () { JP._tawkOpen = false; try { window.Tawk_API.hideWidget(); } catch (e) {} };
+    const sc = document.createElement("script"); sc.async = true; sc.charset = "UTF-8"; sc.setAttribute("crossorigin", "*");
+    sc.src = "https://embed.tawk.to/" + encodeURIComponent(JP.CHAT.tawkProperty) + "/" + encodeURIComponent(JP.CHAT.tawkWidget); document.head.appendChild(sc);
+  };
+  JP.A.openTawk = () => { try { window.Tawk_API.showWidget(); window.Tawk_API.maximize(); } catch (e) { JP.toast(t("Live chat is not available right now.")); } };
+
+  /* ---------- messages and live chat ---------- */
+  const fmt = ts => new Date(ts).toLocaleTimeString("en-PH", { hour: "numeric", minute: "2-digit", timeZone: "Asia/Manila" });
+  JP.V.messages = function () {
+    const last = JP.D.chat[JP.D.chat.length - 1], on = JP.supportOnline(), un = JP.NOTIFS.filter(n => !JP.D.readN.includes(n.id)).length;
+    return { title: "Messages", body: '<h2 class="h2">' + t("Messages") + '</h2><div class="card pad0"><button class="row" data-act="go" data-to="chat"><span class="ibox">' + ic("headset") + '</span><span class="grow"><span class="t">' + t("Live chat support") + '</span><br><span class="s">' + esc(last ? last.text : t("Ask about the app, wrong information, or how to use a feature.")) + '</span><span class="bar" style="margin-top:4px"><span class="badge ' + (on ? "open" : "warn") + '">' + (on ? t("Support online") : t("Support offline")) + "</span></span></span>" + ic("chev", "sm chev") + '</button><button class="row" data-act="go" data-to="notifs"><span class="ibox">' + ic("bell") + '</span><span class="grow"><span class="t">' + t("Notifications") + '</span><br><span class="s">' + esc(JP.NOTIFS[0].t) + "</span></span>" + (un ? '<span class="badge closed">' + un + "</span>" : "") + ic("chev", "sm chev") + "</button></div>" +
+      '<div class="card"><h3 class="h3">' + t("Contact us") + '</h3><dl class="kv"><dt>' + t("Email") + "</dt><dd>" + esc(JP.SUPPORT.email) + "</dd><dt>" + t("Phone") + "</dt><dd>" + esc(JP.SUPPORT.phone) + "</dd><dt>" + t("Hours") + "</dt><dd>" + esc(JP.SUPPORT.hours) + '</dd></dl><div class="bar"><button class="btn sec sm" data-act="copy" data-txt="' + esc(JP.SUPPORT.email) + '">' + ic("mail", "sm") + t("Copy email") + '</button><button class="btn sec sm" data-act="copy" data-txt="' + esc(JP.SUPPORT.phone) + '">' + ic("phone", "sm") + t("Copy number") + '</button></div><p class="lede">' + t("Sample contact details for this prototype. Replace them before launch.") + "</p></div>" };
+  };
+  JP.V.notifs = function () {
+    return { title: "Notifications", after() { JP.NOTIFS.forEach(n => { if (!JP.D.readN.includes(n.id)) JP.D.readN.push(n.id); }); JP.save(); },
+      body: JP.NOTIFS.map(n => '<div class="card"><div class="sec-h"><h3 class="h3">' + esc(JP.D.set.neutralNotif ? n.t : "Notification") + '</h3><span class="lede">' + t(n.ago) + "</span></div><p>" + esc(JP.D.set.neutralNotif ? n.b : "Open JustiPath to read.") + "</p></div>").join("") };
+  };
+  const bubble = m => '<div class="msg ' + (m.from === "me" ? "me" : "them") + '">' + esc(m.text) + "<small>" + fmt(m.ts) + "</small></div>";
+  const push = (from, text) => { JP.D.chat.push({ from, text, ts: Date.now() }); JP.save(); };
+  function logUpdate() { const l = document.getElementById("log"); if (l) { l.innerHTML = JP.D.chat.map(bubble).join(""); l.parentElement.scrollTop = l.parentElement.scrollHeight; } }
+  JP.V.chat = function () {
+    if (JP._tawkOn) {
+      const on0 = JP.supportOnline();
+      return { title: "Live chat support", noNav: true, body: '<div class="note red">' + ic("alert", "sm") + "<span><b>" + t("In danger? Call 911.") + "</b> " + t("This chat is for app questions only. No legal advice. Do not share sensitive case details.") + '</span></div><div class="card"><span class="ibox">' + ic("headset") + '</span><h2 class="h2">' + t("Chat with a support agent") + '</h2><p class="lede">' + t("A real person from the JustiPath team replies to you here. Hours: Monday to Friday, 8 AM to 5 PM. Outside these hours, leave a message and we reply on the next business day.") + '</p><div class="bar"><span class="badge ' + (on0 ? "open" : "warn") + '">' + (on0 ? t("Support online") : t("Support offline")) + '</span></div><button class="btn block" data-act="openTawk">' + ic("message", "sm") + t("Start live chat") + "</button></div>" };
+    }
+    if (!JP.D.chat.length) { push("them", t("Hello! This is JustiPath support. I can help with using the app, wrong office info, or finding a feature.")); if (!JP.supportOnline()) push("them", t("Our team is offline now. We reply Monday to Friday, 8 AM to 5 PM. In danger? Call 911.")); }
+    const on = JP.supportOnline();
+    return { title: "Live chat support", noNav: true, mainClass: "", after() { logUpdate(); },
+      body: '<div class="note red">' + ic("alert", "sm") + "<span><b>" + t("In danger? Call 911.") + "</b> " + t("This chat is for app questions only. No legal advice. Do not share sensitive case details.") + '</span></div><div class="bar"><span class="badge ' + (on ? "open" : "warn") + '">' + (on ? t("Support online") : t("Support offline")) + '</span><span class="badge">' + t("Demo: replies are automated") + '</span></div><div class="chips">' + ["Wrong office information", "The app is not working", "How do I use JustiPath?"].map(q => '<button class="chip" data-act="chatQuick" data-text="' + esc(t(q)) + '">' + t(q) + "</button>").join("") + '</div><div class="chat" id="log"></div>',
+      composer: '<form class="composer" data-submit="chatSend"><input id="cin" name="m" autocomplete="off" placeholder="' + esc(t("Type your message")) + '" aria-label="' + t("Type your message") + '" maxlength="500"><button class="btn" type="submit" aria-label="' + t("Send") + '">' + ic("send", "sm") + "</button></form>" };
+  };
+  function reply(txt) {
+    const low = txt.toLowerCase(); let a = (JP.FAQ.find(f => f.k.split(" ").some(w => w.length > 3 && low.includes(w))) || {}).a;
+    if (!a) a = t("Thanks for your message. A support agent will reply in the next business day.") + (JP.supportOnline() ? "" : " " + t("We are offline now.")) + " " + t("For emergencies, call 911.");
+    setTimeout(() => { push("them", a); logUpdate(); }, 900);
+  }
+  JP.A.chatSend = f => { const i = f.elements.m, v = i.value.trim(); if (!v) return; push("me", v); i.value = ""; logUpdate(); reply(v); };
+  JP.A.chatQuick = el => { push("me", el.dataset.text); logUpdate(); reply(el.dataset.text); };
+
+  /* ---------- profile ---------- */
+  JP.V.profile = function () {
+    const email = JP.D.session, u = email ? JP.D.users[email] : null;
+    let top;
+    if (!u) top = '<div class="card"><span class="ibox">' + ic("user") + '</span><h2 class="h2">' + t("You are using JustiPath as a guest") + '</h2><p class="lede">' + t("Log in to keep a profile, an emergency contact, and your saved items on this device.") + '</p><button class="btn block" data-act="logout">' + ic("logout", "sm") + t("Log in or create account") + "</button></div>";
+    else top = '<div class="card" style="flex-direction:row;align-items:center;gap:14px"><span class="ibox" style="width:56px;height:56px;border-radius:50%;font-family:var(--font-d);font-weight:800;font-size:1.3rem">' + esc(u.name.trim().split(/\s+/).map(x => x[0]).slice(0, 2).join("").toUpperCase()) + '</span><div style="min-width:0"><h2 class="h2">' + esc(u.name) + '</h2><p class="lede" style="overflow-wrap:anywhere">' + esc(email) + "</p></div></div>" +
+      '<form class="card" data-submit="saveProfile" novalidate><h3 class="h3">' + t("My details") + "</h3>" + field("name", "Full name", "text", u.name, 'autocomplete="name"') + '<div class="field"><label>' + t("Email account") + '</label><input value="' + esc(email) + '" readonly aria-readonly="true"></div>' + field("mobile", "Mobile number", "tel", u.mobile, 'inputmode="tel"') + regionSel(u.region) + field("ecn", "Emergency contact name", "text", JP.D.ec.name, "") + field("ecp", "Emergency contact number", "tel", JP.D.ec.num, 'inputmode="tel"') + '<p class="err" id="perr" style="color:var(--red);font-size:.85rem" role="alert"></p><button class="btn block" type="submit">' + ic("check", "sm") + t("Save changes") + "</button></form>";
+    const saved = JP.D.saved.map(id => JP.BY[id]).filter(Boolean);
+    const prog = JP.CASES.map(c => { const q = JP.REQS.find(r => r.cases[0] === c.id), n = (JP.D.checks[q.id] || []).length; return '<button class="row" data-act="case" data-id="' + c.id + '" data-tab="checklist"><span class="ibox ' + c.id + '">' + ic(c.icon) + '</span><span class="grow"><span class="t">' + esc(c[JP.lang()].split(" /")[0]) + '</span><br><span class="s">' + n + " / " + q.items.length + " " + t("ready") + "</span></span>" + ic("chev", "sm chev") + "</button>"; }).join("");
+    return { title: "Profile", body: top + '<h2 class="h2">' + t("Saved items") + '</h2><div class="card pad0">' + (saved.length ? saved.map(o => JP.rowHTML(o, true)).join("") : '<p class="empty">' + t("Tap Save on any item to keep it here.") + "</p>") + '</div><h2 class="h2">' + t("My checklists") + '</h2><div class="card pad0">' + prog + '</div><div class="card pad0"><button class="row" data-act="go" data-to="settings"><span class="ibox">' + ic("settings") + '</span><span class="grow t">' + t("Settings") + "</span>" + ic("chev", "sm chev") + '</button><button class="row" data-act="go" data-to="dpa"><span class="ibox">' + ic("lock") + '</span><span class="grow t">' + t("Data Privacy Act") + "</span>" + ic("chev", "sm chev") + '</button><button class="row" data-act="go" data-to="about"><span class="ibox">' + ic("info") + '</span><span class="grow t">' + t("About JustiPath") + "</span>" + ic("chev", "sm chev") + "</button></div>" + (u ? '<button class="btn sec block" data-act="logoutAsk">' + ic("logout", "sm") + t("Log out") + "</button>" : "") };
+  };
+  JP.A.logoutAsk = () => confirm(t("Log out?"), t("You will return to the login screen. Your data stays on this device."), t("Log out"), "logout");
+  JP.A.saveProfile = f => {
+    const u = JP.D.users[JP.D.session], m = f.elements.mobile.value.replace(/[\s-]/g, ""), e = document.getElementById("perr");
+    if (f.elements.name.value.trim().length < 2) { e.textContent = t("Enter your full name."); return; }
+    if (!/^(09|\+639)\d{9}$/.test(m)) { e.textContent = t("Enter a Philippine mobile number, like 0917 123 4567."); return; }
+    u.name = f.elements.name.value.trim(); u.mobile = m; u.region = f.elements.region.value; JP.D.ec = { name: f.elements.ecn.value.trim(), num: f.elements.ecp.value.trim() }; JP.save(); JP.render(); JP.toast(t("Profile saved"));
+  };
+
+  /* ---------- settings, DPA, about ---------- */
+  const sw = (k, label, sub) => '<button class="switch" role="switch" aria-checked="' + !!JP.D.set[k] + '" data-act="toggle" data-k="' + k + '"><span><b>' + t(label) + "</b><br><span class=\"lede\" style=\"font-size:.8rem\">" + t(sub) + '</span></span><span class="tg"></span></button>';
+  const seg = (k, opts) => '<div class="seg">' + opts.map(([v, l]) => '<button data-act="setSet" data-k="' + k + '" data-v="' + v + '" aria-pressed="' + (JP.D.set[k] === v) + '">' + t(l) + "</button>").join("") + "</div>";
+  JP.V.settings = function () {
+    return { title: "Settings", body:
+      '<div class="card"><h3 class="h3">' + t("Language") + "</h3>" + seg("lang", [["en", "English"], ["fil", "Filipino"]]) + '<p class="lede">' + t("Menus and case names switch language. Long legal text is shown in English first.") + '</p></div><div class="card"><h3 class="h3">' + t("Display") + "</h3>" + seg("size", [["m", "Text"], ["l", "Larger"], ["xl", "Largest"]]) + seg("theme", [["system", "System"], ["light", "Light"], ["dark", "Dark"]]) + "</div>" +
+      '<div class="card"><h3 class="h3">' + ic("speaker", "sm") + " " + t("Voice support") + '</h3><p class="lede">' + t("For people who are blind or have low vision. Hear each button you tap, hear screens, and tap the speaker icon next to information to have it read aloud. You can also select any text to get a speaker button.") + "</p>" + sw("voice", "Voice support", "Speak what I tap and read screens aloud") + "<h3 class=\"h3\" style=\"margin-top:10px\">" + t("Speaking speed") + "</h3>" + seg("rate", [["s", "Slow"], ["n", "Normal"], ["f", "Fast"]]) + '<button class="btn sec block" style="margin-top:10px" data-act="testVoice">' + ic("speaker", "sm") + t("Test voice") + "</button></div>" +
+      '<div class="card pad0">' + sw("hc", "High contrast", "Stronger text and borders") + sw("quickExit", "Show Quick exit button", "A one-tap way to hide the app") + sw("saveSearch", "Remember my searches", "Off by default, for shared phones") + sw("neutralNotif", "Neutral notifications", "Hide message details in notifications") + "</div>" +
+      '<div class="card pad0"><button class="row" data-act="go" data-to="dpa"><span class="ibox">' + ic("lock") + '</span><span class="grow t">' + t("Data Privacy Act") + "</span>" + ic("chev", "sm chev") + '</button><button class="row" data-act="go" data-to="about"><span class="ibox">' + ic("info") + '</span><span class="grow t">' + t("About JustiPath") + "</span>" + ic("chev", "sm chev") + '</button><button class="row" data-act="go" data-to="chat"><span class="ibox">' + ic("headset") + '</span><span class="grow t">' + t("Live chat support") + "</span>" + ic("chev", "sm chev") + "</button></div>" +
+      '<div class="card"><h3 class="h3">' + t("Offline use") + '</h3><p class="lede">' + t("Hotlines, checklists, and guides are built into the app. Maps, online links, and live chat need internet.") + '</p></div><button class="btn sec block" data-act="wipeAsk">' + ic("trash", "sm") + t("Clear my data on this device") + "</button>" + (JP.D.session ? '<button class="btn block" data-act="logoutAsk">' + ic("logout", "sm") + t("Log out") + "</button>" : "") };
+  };
+  JP.A.toggle = el => { JP.D.set[el.dataset.k] = !JP.D.set[el.dataset.k]; JP.save(); JP.render(); if (el.dataset.k === "voice" && JP.speak) { if (JP.D.set.voice) JP.speak(JP.t("Voice support is on. Tap any button to hear it. Tap the speaker icon to hear information.")); else JP.stopSpeak(); } };
+  JP.A.setSet = el => { JP.D.set[el.dataset.k] = el.dataset.v; JP.save(); JP.render(); };
+  JP.A.wipeAsk = () => confirm(t("Clear all data?"), t("This removes your profile, saved items, checklist ticks, and chat on this device. You will see the Data Privacy Act notice again."), t("Clear data"), "wipe");
+  JP.A.wipe = () => { JP.wipe(); S.agree = false; S.gate = "consent"; S.stack = []; S.route = { name: "home", params: {} }; JP.render(); };
+  JP.V.dpa = function () {
+  const c = JP.D.consent;
+  return { title: "Data Privacy Act", body:
+    '<div class="card"><span class="ibox">' + ic("lock") + '</span><h2 class="h2">' + t("Data Privacy Act of 2012 (RA 10173)") + '</h2><div class="dpa" style="max-height:none">' + JP.noticeHTML() + '</div></div>' +
+    '<div class="card"><dl class="kv"><dt>' + t("Consent given") + "</dt><dd>" + (c ? new Date(c.ts).toLocaleString("en-PH", { dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Manila" }) : "-") + "</dd><dt>" + t("Privacy contact") + "</dt><dd>gilzedrickv@gmail.com</dd></dl>" +
+    '<a class="btn sec block" href="https://privacy.gov.ph" target="_blank" rel="noopener">' + ic("external", "sm") + t("National Privacy Commission") + '</a><button class="btn red block" data-act="withdrawAsk">' + t("Withdraw my consent") + "</button></div>" };
+};
+  JP.A.withdrawAsk = () => confirm(t("Withdraw consent?"), t("Your data on this device will be cleared and you will not be able to use JustiPath until you agree again."), t("Withdraw and clear"), "wipe");
+  JP.V.about = function () {
+    return { title: "About JustiPath", body: '<div class="card"><h3 class="h3">' + t("Created by") + '</h3><dl class="kv"><dt>' + t("Owner") + '</dt><dd>' + esc(JP.OWNER.real) + '</dd><dt>' + t("Code name") + '</dt><dd>' + esc(JP.OWNER.alias) + '</dd><dt>' + t("Year") + '</dt><dd>' + JP.OWNER.year + '</dd></dl></div><div class="card"><div class="logo" style="display:flex;align-items:center;gap:10px;font-family:var(--font-d);font-weight:800;font-size:1.6rem"><svg class="ic lg" style="width:40px;height:40px"><use href="#i-logo"/></svg>JustiPath</div><p>' + t("JustiPath is a mobile application that helps people in the Philippines identify the appropriate institution for their concern. It shows institutions with their work hours and whether they are open or closed, explains rights and related laws in plain language, and provides verified contact information, official online reporting links, and step-by-step reporting instructions. Users can call hotlines in an emergency and chat with the support team for help using the app.") + '</p></div><div class="card"><h3 class="h3">' + t("Four cases covered") + '</h3><ul style="margin:0;padding-left:20px">' + JP.CASES.map(c => "<li>" + esc(c[JP.lang()]) + "</li>").join("") + '</ul></div><div class="card"><h3 class="h3">' + t("Please note") + '</h3><ul style="margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px"><li>' + t("General information only. Not legal advice.") + "</li><li>" + t("JustiPath does not file cases, track cases, or act on your behalf.") + "</li><li>" + t("Hours, hotlines, and procedures change. Confirm with the office. Entries marked Please verify have not been checked yet.") + "</li><li>" + t("This is a student prototype. Support contact details are samples.") + "</li><li>" + t("In immediate danger, call 911.") + '</li></ul></div><p class="lede">Version 1.0 · ' + t("Hotline data last checked") + " " + JP.CHECKED + "</p>" };
+  };
+})();
+
+</script>
+<script>
+/* JustiPath guides: an original cast of attorney characters, drawn as SVG (anime style). */
+(function () {
+  const JP = window.JP, esc = JP.esc, ic = JP.ic, t = JP.t, S = JP.S;
+  let uid = 0;
+  JP.CHARS = [
+    { id: "ysabel", g: "f", name: "Atty. Ysabel Cruz", short: "Atty. Ysabel", role: "Calm and precise", style: 1, skin: ["#F8D9BE", "#EBB693"], hair: ["#3A2A33", "#8A6A78", "#1A0F14"], iris: ["#3A2218", "#A5764A"], jacket: ["#16346A", "#0D2347"], acc: "brooch", accC: "#E9B63C", ear: "stud" },
+    { id: "mika", g: "f", name: "Atty. Mika Alvarez", short: "Atty. Mika", role: "Bright and encouraging", style: 2, skin: ["#F2CDA6", "#DDA97F"], hair: ["#92502C", "#E39A62", "#5E2E19"], iris: ["#1D5C40", "#97DBAE"], jacket: ["#F2E8D3", "#D6C5A0"], acc: "bow", accC: "#1C9AA6", ear: "stud", clip: 1 },
+    { id: "danica", g: "f", name: "Atty. Danica Ramos", short: "Atty. Danica", role: "Sharp and steady", style: 3, skin: ["#FBE4D2", "#EEC6AC"], hair: ["#2D1C45", "#7656AE", "#150C26"], iris: ["#4A2A8E", "#D0B2FF"], jacket: ["#3A3C47", "#24252D"], acc: "scarf", accC: "#C62839", ear: "pearl" },
+    { id: "amara", g: "f", name: "Atty. Amara Villanueva", short: "Atty. Amara", role: "Warm and reassuring", style: 4, skin: ["#D9A074", "#BF8559"], hair: ["#2A1A13", "#6B4635", "#0E0807"], iris: ["#6C3C14", "#EDB056"], jacket: ["#DDA61C", "#A97B0A"], acc: "brooch", accC: "#FFFFFF", ear: "hoop" },
+    { id: "rafael", g: "m", name: "Atty. Rafael Dela Cruz", short: "Atty. Rafael", role: "Focused and fair", style: 5, skin: ["#F5D4B4", "#E4B591"], hair: ["#1D1A24", "#55506A", "#0A090E"], iris: ["#1C3C7C", "#74A6EC"], jacket: ["#323846", "#1E222C"], acc: "tie", accC: "#1B8A9A" },
+    { id: "miguel", g: "m", name: "Atty. Miguel Santos", short: "Atty. Miguel", role: "Friendly and quick", style: 6, skin: ["#EDC29A", "#D8A47A"], hair: ["#62402A", "#B4803F", "#36210F"], iris: ["#7C4C12", "#F2BC5E"], jacket: ["#722233", "#4B1421"], acc: "tie", accC: "#E9B63C", glasses: 1 },
+    { id: "elias", g: "m", name: "Atty. Elias Tan", short: "Atty. Elias", role: "Cool and logical", style: 7, skin: ["#F7DCC3", "#E8BFA3"], hair: ["#BAC1CD", "#F0F3F8", "#7C8596"], iris: ["#4C5870", "#BCCBE0"], jacket: ["#808C9E", "#5D687A"], acc: "tie", accC: "#25396E" },
+    { id: "joaquin", g: "m", name: "Atty. Joaquin Reyes", short: "Atty. Joaquin", role: "Bold and caring", style: 8, skin: ["#D6986C", "#BC7E54"], hair: ["#12403F", "#32908F", "#07191A"], iris: ["#0F6D4D", "#82E4B4"], jacket: ["#3C2B60", "#271B42"], acc: "scarf", accC: "#E9B63C" }
+  ];
+  JP.curChar = () => JP.CHARS.find(c => c.id === JP.D.set.guide) || JP.CHARS[0];
+
+  /* ---- v3: youthful (20s) portraits: rounder faces, bigger eyes, hair built as one connected mass ---- */
+  const SPEC = {
+    ysabel: { sk: "#F7D9C0", ss: "#E3B08A", h: "#2B1E26", hh: "#7C5C70", hs: "long", ey: "#5A3820", eh: "#C28C5A", su: "#14336B", sd: "#0B2250", acc: "ribbon", ac: "#C2394F", ear: "stud", bl: .55, lip: "#D2607A" },
+    mika: { sk: "#F4CFAA", ss: "#DDA67E", h: "#7A4A24", hh: "#D6975E", hs: "pony", ey: "#2E7D5B", eh: "#93DAB4", su: "#E4D5B8", sd: "#BFAE8C", acc: "bow", ac: "#2FA7B0", ear: "stud", bl: .6, lip: "#D8687A" },
+    danica: { sk: "#FBE5D6", ss: "#EBC4AC", h: "#2A1A44", hh: "#7E5EB4", hs: "bob", ey: "#6A4AA8", eh: "#C6AEF4", su: "#30343E", sd: "#1B1E25", acc: "ribbon", ac: "#C62839", ear: "stud", bl: .5, lip: "#C85470" },
+    amara: { sk: "#D6A074", ss: "#B67E56", h: "#2A1710", hh: "#85523A", hs: "wavy", ey: "#4A2C18", eh: "#B07E48", su: "#C8921C", sd: "#8C6210", acc: "ribbon", ac: "#FFF1CC", ear: "hoop", bl: .4, lip: "#B2525C" },
+    rafael: { sk: "#F3CCAA", ss: "#DAA580", h: "#13131C", hh: "#5A6484", hs: "short", ey: "#2F4E8A", eh: "#92B4F0", su: "#383B46", sd: "#22242C", acc: "tie", ac: "#1C8A8F", ear: "", bl: .2, lip: "#CC8474" },
+    miguel: { sk: "#EEC39E", ss: "#D6A07A", h: "#6B4426", hh: "#C68E58", hs: "messy", ey: "#3F7A55", eh: "#A6E4C0", su: "#6A1F2F", sd: "#431320", acc: "tie", ac: "#E9B63C", ear: "", bl: .22, lip: "#C48070", gl: "#6B4A2B" },
+    elias: { sk: "#F6D9BE", ss: "#DDB08C", h: "#D9C48C", hh: "#FFF4CE", bc: "#A8905A", hs: "short", ey: "#4A6C99", eh: "#AACCF2", su: "#5A6270", sd: "#3A404B", acc: "tie", ac: "#1F3563", ear: "", bl: .2, lip: "#C8806F" },
+    joaquin: { sk: "#D29A70", ss: "#B27850", h: "#10282A", hh: "#418C8A", hs: "tail", ey: "#1F6B4A", eh: "#8AE4B6", su: "#43256B", sd: "#2B1646", acc: "cravat", ac: "#E9B63C", ear: "", bl: .22, lip: "#AC685A" }
+  };
+  JP.avatar = function (c, pose, label) {
+    const k = SPEC[c.id] || SPEC.ysabel, f = c.g === "f", u = "v" + (++uid), ink = "#1A1220";
+    pose = pose || "none"; const sos = pose === "sos", hand = pose !== "none", hg = 'url(#' + u + 'h)';
+    const P = d => '<path d="' + d + '" fill="' + hg + '"/>';
+    const strand = (d, hi) => '<path d="' + d + '" stroke="' + (hi ? k.hh : ink) + '" stroke-width="' + (hi ? 1.1 : .8) + '" fill="none" opacity="' + (hi ? .55 : .25) + '" stroke-linecap="round"/>';
+    const shine = '<path d="M41 24C54 12 78 12 86 25" stroke="' + k.hh + '" stroke-width="3.6" fill="none" opacity=".6" stroke-linecap="round"/>';
+    /* back layer: the part of the hair that sits behind the shoulders or head */
+    const back = {
+      long: P("M30 62C24 28 42 6 63 6S100 28 94 62C98 88 97 118 103 150H21C27 118 26 88 30 62Z"),
+      wavy: P("M30 62C23 28 42 6 63 6S101 28 94 62C100 84 98 100 108 122C100 130 96 126 92 136C84 144 78 134 74 142C66 148 58 140 50 144C42 140 36 142 32 132C26 128 22 130 16 122C28 100 26 84 30 62Z"),
+      bob: P("M30 62C24 28 42 6 62 6S100 28 94 62C98 78 97 94 90 104C80 110 44 110 34 104C27 94 26 78 30 62Z"),
+      pony: P("M88 24C112 18 128 52 116 90C112 106 116 118 108 136C102 122 100 108 104 94C108 76 96 58 86 46Z") + '<path d="M108 44C118 66 114 90 108 106" stroke="' + k.hh + '" stroke-width="2" fill="none" opacity=".55" stroke-linecap="round"/>',
+      short: "", messy: "",
+      tail: P("M88 30C112 36 122 80 108 124C102 108 98 92 90 76Z") + '<path d="M104 62C108 82 106 100 103 114" stroke="' + k.hh + '" stroke-width="1.8" fill="none" opacity=".5" stroke-linecap="round"/>'
+    }[k.hs];
+    /* front layer: one continuous shape = crown + fringe + side locks (nothing floats) */
+    const front = {
+      long: P("M29 64C23 28 42 6 63 6C85 6 101 28 95 64C98 90 97 112 101 130C91 126 85 114 84 98C83 82 85 66 85 57C84 47 80 41 75 36C66 40 55 36 49 26C48 38 43 49 39 58C38 72 40 88 41 102C41 114 37 124 28 128C32 110 30 86 29 64Z") + shine + strand("M52 27C51 39 45 50 39 58") + strand("M60 21C62 31 66 37 77 39") + strand("M56 14C47 21 42 31 38 44", 1) + strand("M33 70C34 90 33 108 30 122", 1) + strand("M91 70C92 90 92 108 95 122", 1),
+      wavy: P("M29 64C23 28 42 6 63 6C85 6 101 28 95 64C98 82 94 96 100 112C94 120 88 116 86 106C84 94 85 78 85 57C84 47 80 41 75 36C66 40 55 36 49 26C48 38 43 49 39 58C38 72 40 86 38 100C36 112 30 120 22 114C32 100 28 84 29 64Z") + shine + strand("M52 27C51 39 45 50 39 58") + strand("M56 14C47 21 42 31 38 44", 1) + strand("M33 70C33 86 30 100 27 110", 1),
+      pony: P("M29 64C23 28 42 6 63 6C85 6 101 28 95 64C96 74 94 84 90 90C86 84 85 70 85 57C84 47 80 41 75 36C66 40 55 36 49 26C48 38 43 49 39 58C38 68 39 78 41 88C36 84 31 76 29 64Z") + shine + strand("M52 27C51 39 45 50 39 58") + strand("M56 14C47 21 42 31 38 44", 1) + '<ellipse cx="91" cy="28" rx="5" ry="6.6" fill="' + k.ac + '" transform="rotate(-24 91 28)"/>',
+      bob: P("M29 64C23 28 42 6 62 6C84 6 101 28 95 64C97 80 95 94 90 102C82 100 80 90 82 74C83 66 85 60 85 57C84 47 80 41 74 36C64 42 54 38 46 30C46 40 42 50 38 58C38 72 40 88 43 100C38 104 33 102 31 96C27 84 27 72 29 64Z") + shine + strand("M46 31C50 40 58 42 70 42") + strand("M56 13C46 20 40 32 36 46", 1) + strand("M33 70C32 82 34 92 36 98", 1),
+      short: P("M31 60C26 28 43 7 63 7C84 7 100 28 94 60L92 72L87 64C86 50 83 40 77 35C69 30 57 31 49 36C43 40 41 50 39 64L35 72L31 60Z") + shine + strand("M60 12C56 22 46 30 39 40") + strand("M72 12C74 20 80 26 88 34", 1),
+      messy: P("M31 60C26 30 38 12 52 9L50 2L60 8L66 3L70 9L80 7L78 13C92 18 100 36 94 60L92 72L87 64C86 50 83 42 77 38L81 32L71 36L69 28L61 36L55 28L53 38L45 34L47 44C42 48 41 54 39 64L35 72L31 60Z") + shine + strand("M60 14C54 22 46 30 40 42", 1) + strand("M72 12C76 20 82 26 88 34", 1),
+      tail: P("M31 60C26 28 43 7 63 7C84 7 100 28 94 60L92 72L87 64C86 50 83 40 77 35C69 30 57 31 49 36C43 40 41 50 39 64L35 72L31 60Z") + shine + strand("M60 12C56 22 46 30 39 40") + '<circle cx="91" cy="38" r="3.6" fill="#E9B63C"/>'
+    }[k.hs];
+    /* eyes: large, bright, youthful */
+    const eye = (x, s, i) => {
+      const w = f ? 8 : 7.2, hh = (f ? 6.2 : 5.4) * (sos ? .88 : 1), yo = 63.2, yi = 64.6, xo = x + s * w, xi = x - s * w;
+      const top = 'M' + xo + ' ' + yo + 'C' + (x + s * w * .5) + ' ' + (64 - hh * 1.55) + ' ' + (x - s * w * .5) + ' ' + (64 - hh * 1.55) + ' ' + xi + ' ' + yi;
+      const al = top + 'C' + (x - s * w * .5) + ' ' + (64.4 + hh * .9) + ' ' + (x + s * w * .5) + ' ' + (64.4 + hh * .9) + ' ' + xo + ' ' + yo + 'Z';
+      return '<clipPath id="' + u + 'e' + i + '"><path d="' + al + '"/></clipPath><path d="' + al + '" fill="#FBF8F6"/><g clip-path="url(#' + u + 'e' + i + ')"><circle cx="' + x + '" cy="64" r="5.4" fill="url(#' + u + 'i)"/><circle cx="' + x + '" cy="64" r="2.6" fill="#120D17"/><ellipse cx="' + (x - 1.7) + '" cy="62" rx="1.9" ry="1.8" fill="#fff"/><circle cx="' + (x + 2.1) + '" cy="66.2" r=".95" fill="#fff" opacity=".9"/><rect x="' + (x - 9) + '" y="55" width="18" height="6.6" fill="#000" opacity=".1"/></g>' +
+        '<path d="' + top + '" fill="none" stroke="' + ink + '" stroke-width="' + (f ? 2.2 : 1.9) + '" stroke-linecap="round"/>' +
+        (f ? '<path d="M' + xo + ' ' + yo + 'l' + (s * 2.6) + ' -1.8" stroke="' + ink + '" stroke-width="1.6" stroke-linecap="round"/>' : "") +
+        '<path d="M' + (x - w + 1.2) + ' 60.6Q' + x + ' ' + (55.6 - (f ? 0 : -.6)) + ' ' + (x + w - 1.2) + ' 60.4" fill="none" stroke="' + k.ss + '" stroke-width=".9" opacity=".75" stroke-linecap="round"/>';
+    };
+    const bw = f ? 1.6 : 2.4, bc = k.bc || k.h;
+    const brows = sos
+      ? '<path d="M41.5 52.6L57.5 55.4" stroke="' + bc + '" stroke-width="' + bw + '" stroke-linecap="round"/><path d="M66.5 55.4L82.5 52.6" stroke="' + bc + '" stroke-width="' + bw + '" stroke-linecap="round"/>'
+      : '<path d="M42 53.4C47 49 54 48.6 58 51.4" stroke="' + bc + '" stroke-width="' + bw + '" fill="none" stroke-linecap="round"/><path d="M66 51.4C70 48.6 77 49 82 53.4" stroke="' + bc + '" stroke-width="' + bw + '" fill="none" stroke-linecap="round"/>';
+    const nose = '<path d="M60.6 70.4C60 73 59.8 74.6 60.4 75.8" stroke="' + k.ss + '" stroke-width="1.1" fill="none" stroke-linecap="round" opacity=".8"/><path d="M59.6 76.6C61 78 63 78 64.4 76.6" stroke="' + k.ss + '" stroke-width="1.2" fill="none" stroke-linecap="round"/><ellipse cx="62.2" cy="73.6" rx="1.5" ry="1.1" fill="#fff" opacity=".3"/>';
+    const mouth = sos
+      ? '<path d="M56 83.4C58.6 82.2 60.6 82 62 82.6C63.4 82 65.4 82.2 68 83.4C65.6 85.4 58.4 85.4 56 83.4Z" fill="' + k.lip + '"/><path d="M56.4 83.8C59.4 86 64.6 86 67.6 83.8" stroke="#7A2E3A" stroke-width=".6" fill="none" opacity=".45"/>'
+      : '<path d="M55.2 82.2C58.4 80.4 60.6 80.6 62 81.4C63.4 80.6 65.6 80.4 68.8 82.2C65.6 88 58.4 88 55.2 82.2Z" fill="#7A2230"/><path d="M57 82.8C60.2 84.4 63.8 84.4 67 82.8C64.8 85.4 59.2 85.4 57 82.8Z" fill="#fff"/><path d="M55.2 82.2C58.4 80.4 60.6 80.6 62 81.4C63.4 80.6 65.6 80.4 68.8 82.2C65.6 83 58.4 83 55.2 82.2Z" fill="' + k.lip + '"/><path d="M57.4 86C60 88 64 88 66.6 86C64.6 87.4 59.4 87.4 57.4 86Z" fill="' + k.lip + '" opacity=".9"/>';
+    const glasses = k.gl ? '<g fill="#CFE9FF" fill-opacity=".16" stroke="' + k.gl + '" stroke-width="1.5"><rect x="38" y="55" width="24" height="20" rx="7.5"/><rect x="62" y="55" width="24" height="20" rx="7.5"/></g><path d="M60 62Q62 60.4 64 62M38 61L33 60M86 61l5-1" stroke="' + k.gl + '" stroke-width="1.5" fill="none" stroke-linecap="round"/><path d="M42 59l7-1.6M66 59l7-1.6" stroke="#fff" stroke-width="1.2" opacity=".7" stroke-linecap="round"/>' : "";
+    const earring = k.ear === "stud" ? '<circle cx="34.2" cy="69.6" r="1.7" fill="#E9B63C"/><circle cx="89.8" cy="69.6" r="1.7" fill="#E9B63C"/>' : k.ear === "hoop" ? '<circle cx="34" cy="74" r="4.4" fill="none" stroke="#E9B63C" stroke-width="1.5"/><circle cx="90" cy="74" r="4.4" fill="none" stroke="#E9B63C" stroke-width="1.5"/>' : "";
+    let nw = "";
+    if (k.acc === "tie") nw = '<path d="M58.6 118H65.4L67 126L62 148L57 126Z" fill="' + k.ac + '"/><path d="M57.2 113.6L62 118.4L66.8 113.6L65.4 110.6H58.6Z" fill="' + k.ac + '"/><path d="M62 126V146" stroke="#000" stroke-opacity=".16" stroke-width="1.4"/>';
+    if (k.acc === "ribbon") nw = '<path d="M62 121L49 114V128Z" fill="' + k.ac + '"/><path d="M62 121L75 114V128Z" fill="' + k.ac + '"/><path d="M62 121L49 114V128Z" fill="#000" opacity=".1"/><rect x="58.4" y="116.6" width="7.2" height="9" rx="3" fill="' + k.ac + '"/><path d="M60 126L56 143L62 139L68 143L64 126Z" fill="' + k.ac + '"/>';
+    if (k.acc === "bow") nw = '<path d="M62 120L48 112V128Z" fill="' + k.ac + '"/><path d="M62 120L76 112V128Z" fill="' + k.ac + '"/><circle cx="62" cy="120" r="4.4" fill="' + k.ac + '"/><path d="M62 120L48 112V128Z" fill="#000" opacity=".1"/>';
+    if (k.acc === "cravat") nw = '<path d="M49 111C56 116 68 116 75 111L79 122C76 132 69 144 62 148C55 144 48 132 45 122Z" fill="#fff"/><path d="M57 120C59 128 59 136 61 144M67 120C65 128 65 136 63 144" stroke="#D5D9E6" stroke-width="1.5" fill="none"/><circle cx="62" cy="120" r="3.2" fill="' + k.ac + '"/>';
+    const body = '<path d="M4 150C4 128 22 114 46 111L62 124L78 111C102 114 120 128 120 150Z" fill="url(#' + u + 's)"/>' +
+      '<path d="M46 109L62 136L78 109L72 107L62 117L52 107Z" fill="#fff"/><path d="M46 109L62 136L78 109" fill="none" stroke="#C9CEDD" stroke-width="1"/>' + nw +
+      '<path d="M45 110L62 142L44 150L28 120Z" fill="' + k.sd + '"/><path d="M79 110L62 142L80 150L96 120Z" fill="' + k.sd + '"/><path d="M45 110L62 142M79 110L62 142" stroke="#fff" stroke-opacity=".28" stroke-width="1.2" fill="none"/>' +
+      '<g transform="translate(88 130)"><circle r="3.6" fill="#E9B63C"/><path d="M0-2v4M-2 .6h4" stroke="#7A5A10" stroke-width=".9"/></g>';
+    const arm = '<path d="M110 152C111 132 111 114 108 100" stroke="' + k.su + '" stroke-width="20" fill="none" stroke-linecap="round"/><rect x="98.5" y="96" width="19" height="6.5" rx="2.5" fill="#fff"/>';
+    const fg = 'fill="' + k.sk + '" stroke="' + k.ss + '" stroke-width=".7"';
+    let hnd = "";
+    if (pose === "sos") hnd = '<ellipse cx="108" cy="92" rx="9.5" ry="7.5" ' + fg + '/><rect x="97" y="55" width="22" height="38" rx="4.5" fill="#1B1F2A" stroke="#3B4152"/><rect x="99.5" y="59" width="17" height="29" rx="2.5" fill="#C62839"/><text x="108" y="77" font-family="Arial,sans-serif" font-size="8" font-weight="800" fill="#fff" text-anchor="middle">911</text><path d="M103 66h10" stroke="#fff" stroke-width="1.2" opacity=".6" stroke-linecap="round"/><rect x="115.5" y="64" width="6" height="5.4" rx="2.7" ' + fg + '/><rect x="115.5" y="70.5" width="6" height="5.4" rx="2.7" ' + fg + '/><rect x="115.5" y="77" width="6" height="5.4" rx="2.7" ' + fg + '/><rect x="91" y="78" width="9" height="5.6" rx="2.8" ' + fg + '/>';
+    else if (pose === "greet") hnd = '<g ' + fg + '><rect x="105.8" y="66" width="4.4" height="17" rx="2.2" transform="rotate(-26 108 86)"/><rect x="105.8" y="64" width="4.4" height="18" rx="2.2" transform="rotate(-9 108 86)"/><rect x="105.8" y="64" width="4.4" height="18" rx="2.2" transform="rotate(9 108 86)"/><rect x="105.8" y="66" width="4.4" height="16" rx="2.2" transform="rotate(26 108 86)"/><rect x="104.6" y="74" width="5" height="12" rx="2.5" transform="rotate(-66 108 90)"/><ellipse cx="108" cy="89" rx="8.6" ry="9"/></g>';
+    const vb = hand ? "0 0 140 150" : "0 0 124 150";
+    return '<svg viewBox="' + vb + '" ' + (label ? 'role="img" aria-label="' + label + '"' : 'aria-hidden="true"') + '><defs>' +
+      '<linearGradient id="' + u + 'h" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="' + k.hh + '"/><stop offset=".3" stop-color="' + k.h + '"/><stop offset="1" stop-color="' + k.h + '"/></linearGradient>' +
+      '<linearGradient id="' + u + 'i" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="' + k.ey + '"/><stop offset="1" stop-color="' + k.eh + '"/></linearGradient>' +
+      '<linearGradient id="' + u + 's" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="' + k.su + '"/><stop offset="1" stop-color="' + k.sd + '"/></linearGradient>' +
+      '<linearGradient id="' + u + 'f" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="' + k.sk + '"/><stop offset=".66" stop-color="' + k.sk + '"/><stop offset="1" stop-color="' + k.ss + '"/></linearGradient>' +
+      '<radialGradient id="' + u + 'b"><stop offset="0" stop-color="#EF6F7C" stop-opacity="' + k.bl + '"/><stop offset="1" stop-color="#EF6F7C" stop-opacity="0"/></radialGradient></defs>' +
+      back + body +
+      '<path d="M54 84C54 96 52 104 48 112H76C72 104 70 96 70 84Z" fill="' + k.sk + '"/><path d="M54 92Q62 104 70 92V100Q62 108 54 100Z" fill="' + k.ss + '" opacity=".6"/>' +
+      '<ellipse cx="33.6" cy="63" rx="3.4" ry="5.2" fill="' + k.sk + '" stroke="' + k.ss + '" stroke-width=".8"/><ellipse cx="90.4" cy="63" rx="3.4" ry="5.2" fill="' + k.sk + '" stroke="' + k.ss + '" stroke-width=".8"/>' +
+      '<path d="M34 54C34 35 46 24 62 24S90 35 90 54C90 70 81 86 62 93C43 86 34 70 34 54Z" fill="url(#' + u + 'f)"/>' +
+      '<ellipse cx="62" cy="40" rx="14" ry="6" fill="#fff" opacity=".14"/>' +
+      '<ellipse cx="43" cy="76" rx="8.5" ry="5.4" fill="url(#' + u + 'b)"/><ellipse cx="81" cy="76" rx="8.5" ry="5.4" fill="url(#' + u + 'b)"/>' +
+      eye(49, -1, 0) + eye(75, 1, 1) + brows + nose + mouth + glasses + front + earring + (hand ? arm + hnd : "") + '</svg>';
+  };
+
+  /* picker sheet */
+  const ovl = JP.overlayHTML;
+  JP.overlayHTML = function () {
+    const sh = S.sheet;
+    if (!sh || sh.k !== "guide") return ovl();
+    const f = sh.f || "", cur = JP.curChar().id;
+    const chips = '<div class="chips">' + [["", "All"], ["f", "Women"], ["m", "Men"]].map(([v, l]) => '<button class="chip" aria-pressed="' + (f === v) + '" data-act="guideFilter" data-f="' + v + '">' + t(l) + "</button>").join("") + "</div>";
+    const cards = JP.CHARS.filter(c => !f || c.g === f).map(c => '<button class="gcard' + (c.id === cur ? " on" : "") + '" data-act="setGuide" data-id="' + c.id + '" aria-pressed="' + (c.id === cur) + '"><span class="gav">' + JP.avatar(c, "none") + "</span><b>" + esc(c.name) + "</b><small>" + t(c.role) + "</small>" + (c.id === cur ? '<span class="gtick">' + ic("check", "sm") + "</span>" : "") + "</button>").join("");
+    return '<div class="sheet-bg" data-act="closeSheet"><div class="sheet" role="dialog" aria-modal="true" aria-label="' + t("Choose your guide") + '"><div class="grab"></div><div class="sec-h"><h2 class="h2">' + t("Choose your guide") + '</h2><button class="tbtn" style="background:var(--surface-2);color:var(--ink)" data-act="closeSheet" aria-label="' + t("Close") + '">' + ic("x") + '</button></div><p class="lede">' + t("Pick who greets you. You can change this any time.") + "</p>" + chips + '<div class="ggrid">' + cards + "</div></div></div>";
+  };
+  JP.A.pickGuide = () => { S.sheet = { k: "guide", f: "" }; JP.render(); };
+  JP.A.guideFilter = el => { S.sheet = { k: "guide", f: el.dataset.f }; JP.render(); };
+  JP.A.setGuide = el => { const c = JP.CHARS.find(x => x.id === el.dataset.id); if (!c) return; JP.D.set.guide = c.id; JP.save(); S.sheet = null; JP.render(); JP.toast(c.name + " " + t("is now your guide")); };
+})();
+
+</script>
+<script>
+/* JustiPath features: support chat with bot + emoji reactions, built-in Assistant, voice support (read aloud). */
+(function () {
+  const JP = window.JP, esc = JP.esc, ic = JP.ic, t = JP.t, S = JP.S;
+  const fmt = ts => new Date(ts).toLocaleTimeString("en-PH", { hour: "numeric", minute: "2-digit", timeZone: "Asia/Manila" });
+  const rich = s => esc(s).replace(/\*\*(.+?)\*\*/g, "<b>$1</b>");
+
+  /* =============== VOICE (text to speech) =============== */
+  JP.canSpeak = () => "speechSynthesis" in window && typeof SpeechSynthesisUtterance !== "undefined";
+  const pickVoice = lang => {
+    let vs = []; try { vs = speechSynthesis.getVoices() || []; } catch (e) {}
+    const want = lang === "fil" ? ["fil", "tl"] : ["en-ph", "en-us", "en"];
+    for (const w of want) { const v = vs.find(x => x.lang && x.lang.toLowerCase().startsWith(w)); if (v) return v; }
+    return null;
+  };
+  JP.stopSpeak = function () { try { speechSynthesis.cancel(); } catch (e) {} JP._speaking = false; };
+  JP.speak = function (text, o) {
+    o = o || {};
+    if (!JP.canSpeak()) { if (!o.quiet) JP.toast(t("Voice is not supported on this browser.")); return; }
+    text = String(text || "").replace(/\s+/g, " ").trim(); if (!text) return;
+    if (!o.queue) JP.stopSpeak();
+    const fil = JP.lang() === "fil", rate = { s: .8, n: 1, f: 1.25 }[JP.D.set.rate] || 1, voice = pickVoice(fil ? "fil" : "en");
+    const parts = text.match(/[^.!?;:\n]+[.!?;:]?/g) || [text], chunks = []; let cur = "";
+    parts.forEach(p => { if ((cur + p).length > 180) { if (cur) chunks.push(cur); cur = p; } else cur += p; }); if (cur) chunks.push(cur);
+    chunks.forEach((c, i) => { const u = new SpeechSynthesisUtterance(c.trim()); u.lang = fil ? "fil-PH" : "en-PH"; if (voice) u.voice = voice; u.rate = rate; if (i === chunks.length - 1) u.onend = () => { JP._speaking = false; }; u.onerror = () => { JP._speaking = false; }; try { speechSynthesis.speak(u); JP._speaking = true; } catch (e) {} });
+  };
+  if (JP.canSpeak()) { try { speechSynthesis.getVoices(); speechSynthesis.onvoiceschanged = () => {}; } catch (e) {} }
+  const textOf = el => { const c = el.cloneNode(true); c.querySelectorAll(".spk,.rbar,.reacts,.vfab,script,style,svg").forEach(n => n.remove()); const d = document.createElement("div"); d.innerHTML = c.innerHTML.replace(/<[^>]+>/g, " "); return (d.textContent || "").replace(/\s+/g, " ").trim(); };
+  JP.A.speakEl = el => { const host = el.closest(".rd") || el.parentElement; JP.speak(textOf(host)); };
+  JP.A.readScreen = () => {
+    if (JP._speaking && speechSynthesis.speaking) { JP.stopSpeak(); return; }
+    const m = document.getElementById("main"), h = document.querySelector(".topbar h1"); if (!m) return;
+    JP.speak(((h ? h.textContent + ". " : "") + textOf(m)).slice(0, 4000));
+  };
+  JP.A.voiceOn = () => { JP.D.set.voice = true; JP.save(); JP.render(); JP.speak(t("Voice support is on. Tap any button to hear it. Tap the speaker icon to hear information.")); };
+  JP.A.testVoice = () => JP.speak(t("Voice support is working. JustiPath can read buttons and information aloud."));
+  JP.spk = (label, cls) => '<button class="spk ' + (cls || "") + '" data-act="speakEl" aria-label="' + esc(label || t("Read aloud")) + '" title="' + esc(label || t("Read aloud")) + '">' + ic("speaker", "sm") + "</button>";
+
+  /* announce what the user taps (voice mode) */
+  document.addEventListener("click", e => {
+    if (!JP.D || !JP.D.set.voice) return;
+    const el = e.target.closest("button,a,[role=checkbox],[role=switch],[role=button],[data-act]");
+    if (!el || el.closest(".vfab,.spkfloat,.spk")) return;
+    let label = el.getAttribute("aria-label") || textOf(el); if (!label) return;
+    if (el.getAttribute("role") === "switch") label += ", " + (el.getAttribute("aria-checked") === "true" ? t("now off") : t("now on"));
+    if (el.getAttribute("role") === "checkbox") label += ", " + (el.getAttribute("aria-checked") === "true" ? t("unchecked") : t("checked"));
+    JP.speak(label.slice(0, 160));
+  }, true);
+  /* read the selected text with the floating speaker */
+  const fab = document.createElement("button"); fab.className = "spkfloat"; fab.hidden = true; fab.setAttribute("aria-label", "Read selected text aloud"); fab.innerHTML = ic("speaker"); document.body.appendChild(fab);
+  let selTxt = "", selTm;
+  const upd = () => {
+    const sel = window.getSelection(), txt = sel ? sel.toString().trim() : "", app = document.getElementById("app");
+    if (!txt || !sel.rangeCount || !app || !app.contains(sel.anchorNode)) { fab.hidden = true; return; }
+    const r = sel.getRangeAt(0).getBoundingClientRect(); selTxt = txt; fab.hidden = false;
+    fab.style.top = Math.min(window.innerHeight - 56, r.bottom + 14) + "px"; fab.style.left = Math.max(8, Math.min(window.innerWidth - 52, r.left + r.width / 2 - 22)) + "px";
+  };
+  document.addEventListener("selectionchange", () => { clearTimeout(selTm); selTm = setTimeout(upd, 120); });
+  ["mousedown", "touchstart", "pointerdown"].forEach(ev => fab.addEventListener(ev, e => e.preventDefault(), { passive: false }));
+  fab.addEventListener("click", e => { e.preventDefault(); JP.speak(selTxt); });
+  document.addEventListener("keydown", e => { if ((e.key === "Enter" || e.key === " ") && e.target.matches && e.target.matches("[role=button][data-act]")) { e.preventDefault(); e.target.click(); } });
+
+  /* after every render: voice button + announce the new screen */
+  JP.onRender = function (v) {
+    const root = document.getElementById("app");
+    if (JP.S.gate && root) { if (!JP.D.set.voice) root.insertAdjacentHTML("beforeend", '<button class="vfab on-gate" data-act="voiceOn" aria-label="Turn on voice support. Voice support reads buttons and text aloud.">' + ic("speaker") + "<span>Voice support</span></button>"); return; }
+    const key = JP.S.route.name + ":" + JSON.stringify(JP.S.route.params || {}) + (JP.S.sheet ? ":sheet" + JP.S.sheet.k : "");
+    if (JP.D.set.voice && root && !JP.S.neutral && !JP.S.gate) {
+      root.insertAdjacentHTML("beforeend", '<button class="vfab' + (JP.S.route.name === "home" ? " hi" : "") + '" data-act="readScreen" aria-label="' + t("Read this screen aloud") + '">' + ic("speaker") + "<span>" + t("Read screen") + "</span></button>");
+      if (JP._lastKey !== key) { const title = JP.S.sheet ? (JP.S.sheet.k === "help" ? t("Need help now?") : t("Choose your guide")) : (v && v.title) || ""; if (title && JP._lastKey !== undefined) JP.speak(t(title), { queue: true }); }
+    }
+    JP._lastKey = key;
+  };
+
+  /* =============== SUPPORT CHAT: bot + emoji reactions =============== */
+  const EMOJI = ["👍", "❤️", "😂", "😮", "😢", "🙏"];
+  JP.creatorLive = false;
+  const push = (from, text, extra) => { const m = Object.assign({ from, text, ts: Date.now() }, extra || {}); JP.D.chat.push(m); JP.save(); return m; };
+  const actBtn = a => a.tel ? '<a class="btn red sm" href="tel:' + esc(a.tel) + '" data-native="1">' + ic("phone", "sm") + esc(a.l) + "</a>"
+    : '<button class="btn sec sm" data-act="' + a.act + '"' + ["id", "to", "type", "c", "tab"].map(k => a[k] ? " data-" + k + '="' + esc(a[k]) + '"' : "").join("") + ">" + esc(a.l) + "</button>";
+  const bubble = (m, i) => {
+    const mine = m.from === "me", lab = m.from === "creator" ? t("Creator") : mine ? "" : t("JustiPath Bot");
+    const re = (m.r || []).map(e => '<span class="rchip mine" aria-label="' + t("You reacted") + " " + e + '">' + e + "</span>").join("") + (m.b || []).map(e => '<span class="rchip" aria-label="' + t("Support reacted") + " " + e + '">' + e + "</span>").join("");
+    const pick = S.reactFor === i ? '<div class="rbar" role="group" aria-label="' + t("React with an emoji") + '">' + EMOJI.map(e => '<button data-act="addReact" data-i="' + i + '" data-e="' + e + '" aria-pressed="' + (m.r || []).includes(e) + '" aria-label="' + e + '">' + e + "</button>").join("") + "</div>" : "";
+    return '<div class="mwrap ' + (mine ? "me" : "them") + ' rd">' + (lab ? '<span class="who">' + (m.from === "creator" ? ic("user", "sm") : ic("headset", "sm")) + esc(lab) + "</span>" : "") +
+      '<div class="msg ' + (mine ? "me" : "them") + '" role="button" tabindex="0" data-act="react" data-i="' + i + '" aria-label="' + esc(m.text) + ". " + t("Tap to react") + '">' + esc(m.text) + "<small>" + fmt(m.ts) + "</small></div>" +
+      ((m.a || []).length ? '<div class="acts">' + m.a.map(actBtn).join("") + "</div>" : "") + (re ? '<div class="reacts">' + re + "</div>" : "") + pick + (mine ? "" : JP.spk(t("Read aloud"))) + "</div>";
+  };
+  function logUpdate(keepScroll) { const l = document.getElementById("log"); if (!l) return; l.innerHTML = JP.D.chat.map(bubble).join("") + (S.typing ? '<div class="mwrap them"><div class="msg them typing" aria-label="' + t("Bot is typing") + '"><i></i><i></i><i></i></div></div>' : ""); if (!keepScroll) l.parentElement.scrollTop = l.parentElement.scrollHeight; }
+  JP.A.react = el => { const i = +el.dataset.i; S.reactFor = S.reactFor === i ? null : i; logUpdate(true); };
+  JP.A.addReact = el => { const m = JP.D.chat[+el.dataset.i]; if (!m) return; m.r = m.r || []; const e = el.dataset.e, k = m.r.indexOf(e); if (k >= 0) m.r.splice(k, 1); else m.r.push(e); S.reactFor = null; JP.save(); logUpdate(true); };
+  JP.A.clearChat = () => { JP.D.chat = []; JP.save(); S.reactFor = null; JP.render(); };
+
+  const botBrain = txt => {
+    const low = txt.toLowerCase(), has = re => re.test(low);
+    if (has(/(creator|owner|developer|human|real person|agent|tao|totoong|kausap)/)) return { text: t("I am an automatic bot. The creator replies in live chat when available (Monday to Friday, 8 AM to 5 PM). Tap the button below to talk to the creator."), a: [{ l: t("Talk to the creator"), act: "openTawk" }] };
+    if (has(/(emergency|danger|help me|tulong|sinasaktan|911)/)) return { text: t("If you are in danger, call 911 now. This chat cannot send help."), a: [{ l: t("Call") + " 911", tel: "911" }] };
+    const f = JP.FAQ.find(q => q.k.split(" ").some(w => w.length > 3 && low.includes(w))); if (f) return { text: f.a };
+    const hit = JP.search(txt).find(o => ["guide", "office", "hotline", "law", "right"].includes(o.type));
+    if (hit) return { text: t("I found something that may help:") + " " + hit.title + ".", a: [{ l: t("Open it"), act: "item", id: hit.id }, { l: t("Ask the Assistant"), act: "tab", to: "assistant" }] };
+    return { text: t("Thanks for your message. I am a bot, so I may not have the answer. The creator will reply when available.") + (JP.supportOnline() ? "" : " " + t("We are offline now.")) + " " + t("For emergencies, call 911."), a: [{ l: t("Ask the Assistant"), act: "tab", to: "assistant" }, { l: t("Talk to the creator"), act: "openTawk" }] };
+  };
+  function botRespond(txt, idx) {
+    if (JP.creatorLive) { if (!JP._creatorNote) { JP._creatorNote = true; push("creator", t("The creator joined the live chat. Please continue in the live chat window."), { a: [{ l: t("Open live chat"), act: "openTawk" }] }); logUpdate(); } return; }
+    S.typing = true; logUpdate();
+    setTimeout(() => {
+      S.typing = false; const r = botBrain(txt); const m = push("bot", r.text, { a: r.a });
+      if (/(thank|salamat|maraming)/i.test(txt) && JP.D.chat[idx]) { JP.D.chat[idx].b = ["❤️"]; JP.save(); }
+      logUpdate(); if (JP.D.set.voice) JP.speak(m.text);
+    }, 900 + Math.random() * 500);
+  }
+  JP.A.chatSend = f => { const i = f.elements.m, v = i.value.trim(); if (!v) return; const m = push("me", v); i.value = ""; S.reactFor = null; logUpdate(); botRespond(v, JP.D.chat.indexOf(m)); };
+  JP.A.chatQuick = el => { const m = push("me", el.dataset.text); logUpdate(); botRespond(el.dataset.text, JP.D.chat.indexOf(m)); };
+  JP.V.chat = function () {
+    if (!JP.D.chat.length) push("bot", t("Hi! I am the JustiPath support bot. I answer automatically until the creator joins the chat. Tap any message to react with an emoji."), { a: [] });
+    const live = JP.creatorLive, on = JP.supportOnline();
+    return { title: "Support", noNav: true, after() { logUpdate(); },
+      body: '<div class="note red">' + ic("alert", "sm") + "<span><b>" + t("In danger? Call 911.") + "</b> " + t("This chat is for app questions only. No legal advice. Do not share sensitive case details.") + "</span></div>" +
+        '<div class="bar"><span class="badge ' + (live ? "open" : "") + '">' + ic(live ? "user" : "headset", "sm") + (live ? t("Creator is live: bot paused") : t("Bot is answering")) + '</span><span class="badge ' + (on ? "open" : "warn") + '">' + (on ? t("Support online") : t("Support offline")) + '</span></div>' +
+        '<button class="btn block" data-act="openTawk">' + ic("user", "sm") + t("Talk to the creator (live chat)") + '</button>' +
+        '<div class="chips">' + ["Wrong office information", "The app is not working", "How do I use JustiPath?"].map(q => '<button class="chip" data-act="chatQuick" data-text="' + esc(t(q)) + '">' + t(q) + "</button>").join("") + '</div><p class="lede" style="font-size:.78rem">' + t("Tap a message to react with an emoji.") + '</p><div class="chat" id="log"></div><button class="linkbtn" data-act="clearChat">' + t("Clear this chat") + "</button>",
+      composer: '<form class="composer" data-submit="chatSend"><input id="cin" name="m" autocomplete="off" placeholder="' + esc(t("Type your message")) + '" aria-label="' + t("Type your message") + '" maxlength="500"><button class="btn" type="submit" aria-label="' + t("Send") + '">' + ic("send", "sm") + "</button></form>" };
+  };
+
+  /* =============== ASSISTANT (built-in, runs on the device) =============== */
+  const CRISIS = /(kill myself|suicid|end my life|want to die|mamatay na lang|gusto kong mamatay|magpakamatay|ayoko nang mabuhay|self.?harm)/;
+  const EMERG = /(emergency|in danger|danger|help me|tulungan ako|sinasaktan ako|binubugbog|papatayin|may baril|has a gun|knife|patalim|rape|ginahasa|hostage|dumudugo|bleeding|kidnap)/;
+  const caseOf = q => { const toks = JP.tokens(q), sc = JP.CASES.map(c => { const h = (c.tags + " " + c.en + " " + c.fil).toLowerCase().replace(/[’']/g, ""); return { c, n: toks.filter(w => h.includes(w)).length }; }).filter(x => x.n).sort((a, b) => b.n - a.n); return sc.length ? sc[0].c : null; };
+  const rows = ids => ids.map(id => JP.BY[id]).filter(Boolean);
+  function aiAnswer(q) {
+    const low = q.toLowerCase().replace(/[’']/g, ""), has = re => re.test(low);
+    if (has(CRISIS)) return { text: t("I am really sorry you are hurting. You matter, and you do not have to face this alone. Please reach out to someone right now."), acts: [{ l: t("Call") + " NCMH 0917-899-8727", tel: "09178998727" }, { l: t("Call") + " 911", tel: "911" }] };
+    const c = caseOf(q), out = { text: "", acts: [], items: [] };
+    if (has(EMERG)) { out.text = t("If you or someone else is in danger, call 911 first."); out.acts.push({ l: t("Call") + " 911", tel: "911" }, { l: t("See hotlines"), act: "tab", to: "help" }); if (!c) return out; out.text += "\n\n"; }
+    if (has(/^(hi|hello|hey|kumusta|musta|good (morning|afternoon|evening))\b/) && !c) return { text: t("Hello! Tell me what happened in your own words, like “my boss won’t pay me” or “na-hack ang account ko”. I will show where to go, what to bring, and what comes next."), acts: [], items: [] };
+    if (has(/(thank|salamat)/) && !c) return { text: t("You are welcome. Stay safe, and ask me anything else."), acts: [], items: [] };
+    if (has(/(open now|bukas|opening|hours|oras|schedule)/)) { const o = JP.OFFICES.filter(x => (!c || x.cases.includes(c.id)) && JP.status(x.hours).open).slice(0, 4); out.text += o.length ? t("These offices are open now (Philippine time):") : t("No matching office is open right now. Most open Monday to Friday, 8 AM to 5 PM. Police stations and hospitals are open 24 hours."); out.items = o.map(x => x.id); return out; }
+    if (has(/(hotline|numero|number|tawag|call|contact)/)) { const h = JP.HOTLINES.filter(x => !c || x.cases.includes(c.id)).sort((a, b) => b.em - a.em).slice(0, 4); out.text += t("Here are hotlines you can call:"); out.items = h.map(x => x.id); out.acts.push({ l: t("See all hotlines"), act: "list", type: "hotline" }); return out; }
+    if (c) {
+      const g = JP.GUIDES.find(x => x.cases[0] === c.id), r = JP.REQS.find(x => x.cases[0] === c.id), name = c[JP.lang()];
+      if (has(/(bring|dala|requirement|document|kailangan|checklist|papel)/)) { out.text += t("For") + " " + name + ", " + t("bring these:") + "\n• " + r.items.slice(0, 6).join("\n• "); out.acts.push({ l: t("Open checklist"), act: "case", id: c.id, tab: "checklist" }); return out; }
+      if (has(/(right|karapatan)/)) { out.text += t("Your rights in") + " " + name + ":"; out.items = JP.RIGHTS.filter(x => x.cases.includes(c.id)).slice(0, 4).map(x => x.id); return out; }
+      if (has(/(law|batas|\bra\b)/)) { out.text += t("Laws that apply to") + " " + name + ":"; out.items = JP.LAWS.filter(x => x.cases.includes(c.id)).slice(0, 4).map(x => x.id); return out; }
+      if (has(/(where|saan|office|institution|punta|go to)/)) { out.text += t("Where to go for") + " " + name + ":"; out.items = JP.OFFICES.filter(x => x.cases.includes(c.id)).slice(0, 4).map(x => x.id); return out; }
+      out.text += t("This sounds like") + " **" + name + "**.\n" + t("Start here") + ": " + c.first[JP.lang()] + ".\n\n" + g.steps.slice(0, 3).map((s, i) => (i + 1) + ". " + s.t + ": " + s.d).join("\n") + "\n\n" + t("This is general information, not legal advice.");
+      out.acts.push({ l: t("Full guide"), act: "case", id: c.id, tab: "guide" }, { l: t("Checklist"), act: "case", id: c.id, tab: "checklist" }, { l: t("Hotlines"), act: "case", id: c.id, tab: "hotline" });
+      out.items = JP.OFFICES.filter(x => x.cases.includes(c.id)).slice(0, 2).map(x => x.id); return out;
+    }
+    const hits = JP.search(q).slice(0, 4);
+    if (hits.length) { out.text += t("Here is what I found in the JustiPath library:"); out.items = hits.map(x => x.id); return out; }
+    out.text += t("I could not match that yet. Try plain words like “boss won’t pay me”, “nanakawan ako”, “na-hack ang account”, or pick a case:"); JP.CASES.forEach(x => out.acts.push({ l: x[JP.lang()].split(" /")[0], act: "case", id: x.id, tab: "guide" })); return out;
+  }
+  const aiBubble = m => {
+    if (m.role === "user") return '<div class="mwrap me"><div class="msg me">' + esc(m.text) + "<small>" + fmt(m.ts) + "</small></div></div>";
+    const items = (m.items || []).map(id => JP.BY[id]).filter(Boolean).map(o => '<button class="airow" data-act="item" data-id="' + o.id + '"><b>' + esc(o.title) + "</b><small>" + esc(o.type === "hotline" ? o.num : (JP.itemSub(o) || "").slice(0, 90)) + "</small></button>").join("");
+    return '<div class="mwrap them rd"><span class="who">' + ic("spark", "sm") + t("Assistant") + '</span><div class="msg them">' + rich(m.text) + (items ? '<div class="aitems">' + items + "</div>" : "") + "<small>" + fmt(m.ts) + "</small></div>" + ((m.acts || []).length ? '<div class="acts">' + m.acts.map(actBtn).join("") + "</div>" : "") + JP.spk(t("Read aloud")) + "</div>";
+  };
+  function aiUpdate() { const l = document.getElementById("ailog"); if (!l) return; l.innerHTML = JP.D.ai.map(aiBubble).join("") + (S.aiTyping ? '<div class="mwrap them"><div class="msg them typing"><i></i><i></i><i></i></div></div>' : ""); l.parentElement.scrollTop = l.parentElement.scrollHeight; }
+  function aiAsk(q) {
+    JP.D.ai.push({ role: "user", text: q, ts: Date.now() }); S.aiTyping = true; aiUpdate();
+    setTimeout(() => { S.aiTyping = false; const a = aiAnswer(q); JP.D.ai.push({ role: "bot", text: a.text, acts: a.acts, items: a.items, ts: Date.now() }); if (JP.D.ai.length > 60) JP.D.ai = JP.D.ai.slice(-60); JP.save(); aiUpdate(); if (JP.D.set.voice) JP.speak(a.text.replace(/\*\*/g, "")); }, 700);
+  }
+  JP.A.aiSend = f => { const i = f.elements.m, v = i.value.trim(); if (!v) return; i.value = ""; aiAsk(v); };
+  JP.A.aiQuick = el => aiAsk(el.dataset.text);
+  JP.A.aiClear = () => { JP.D.ai = []; JP.save(); JP.render(); };
+  JP.V.assistant = function () {
+    if (!JP.D.ai.length) JP.D.ai.push({ role: "bot", text: t("Hi! I am the JustiPath Assistant. Tell me what happened in your own words and I will show where to go, what to bring, and what comes next."), acts: [], items: [], ts: Date.now() });
+    const qs = ["My boss won’t pay me", "Nanakawan ako ng phone", "Na-hack ang account ko", "My partner hurts me", "Hotline numbers", "Offices open now"];
+    return { title: "Assistant", after() { aiUpdate(); },
+      body: '<div class="card" style="flex-direction:row;gap:12px;align-items:center"><span class="ibox">' + ic("spark") + '</span><div style="min-width:0"><h2 class="h2">' + t("JustiPath Assistant") + '</h2><p class="lede" style="font-size:.8rem">' + t("Answers come from JustiPath’s built-in library of rights, laws, offices and hotlines. It is not legal advice.") + '</p></div></div>' +
+        '<div class="chips">' + qs.map(q => '<button class="chip" data-act="aiQuick" data-text="' + esc(t(q)) + '">' + esc(t(q)) + "</button>").join("") + '</div><div class="chat" id="ailog"></div><button class="linkbtn" data-act="aiClear">' + t("Clear this chat") + "</button>",
+      composer: '<form class="composer" data-submit="aiSend"><input id="ain" name="m" autocomplete="off" placeholder="' + esc(t("Ask in plain words")) + '" aria-label="' + t("Ask in plain words") + '" maxlength="300"><button class="btn" type="submit" aria-label="' + t("Send") + '">' + ic("send", "sm") + "</button></form>" };
+  };
+  window.addEventListener("online", () => {});
+})();
+
+</script>
+<script>
+/* JustiPath boot: privacy consent first, then log in or continue as guest. */
+(function () {
+  const JP = window.JP;
+  const start = () => { JP.S.gate = !JP.D.consent ? "consent" : (JP.D.session || JP.D.guest) ? null : "auth"; JP.S.authMode = "login"; JP.render(); };
+  Promise.race([JP.restore(), new Promise(r => setTimeout(r, 800))]).then(start, start);
+})();
+
+</script>
+</body>
+</html>
